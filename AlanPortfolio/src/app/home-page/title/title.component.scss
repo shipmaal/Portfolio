@@ -1,0 +1,74 @@
+
+.container {
+  justify-self: center;
+  position: relative;
+  top: 0;
+  transition: top 0.75s ease;
+  transition-delay: 0.25s;
+}
+
+.spacer {
+  height: 72vh;
+}
+
+.my-svg {
+  position: relative;
+  align-items: flex-start;
+  transform: translateY(-24px);
+  overflow: visible;
+}
+
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.dot {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  margin: 2.5px 2.5px 2.5px 2.5px;
+  background-color: cornsilk;
+}
+
+$animationDuration: 0.7s;
+$animationDelayStep: 0.1s;
+
+.loadingContainer {
+    $dotsCount: 4;
+
+    @for $i from $dotsCount through 1 {
+        .dot:nth-last-child(#{$i}) {
+            animation: jumpingAnimation $animationDuration ($dotsCount - $i + 1) * $animationDelayStep ease-in infinite;
+        }
+    }
+}
+
+
+
+.loading {
+  margin: auto auto 10px auto;
+  font-size: 2.8rem;
+}
+
+.slide {
+  top: -100vh;
+  transition: top 0.75s ease;
+  transition-delay: 0.25s;
+}
+
+@keyframes jumpingAnimation {
+  0% {
+    transform: translate3d(0, 0,0);
+  }
+
+  50% {
+    transform: translate3d(0, 15px,0);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
