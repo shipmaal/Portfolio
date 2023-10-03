@@ -10,7 +10,7 @@
                     "options": {
                         
 
-                        "outputPath": "dist/AlanPortfolio/browser",
+                        "outputPath": "dist/AlanPortfolio",
                         "index": "src/index.html",
                         "main": "src/main.ts",
                         "polyfills": [
