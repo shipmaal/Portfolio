@@ -6,12 +6,7 @@ import { HomePageComponent } from './home-page/home-page.component';
 export const APP_ROUTES: Routes = [
 	{
 		path: '',
-		pathMatch: 'full',
-		redirectTo: 'home'
-	},
-	{
-		path: 'home',
-		component: HomePageComponent
+        component: HomePageComponent
 	},
 	{
 		path: 'about',
