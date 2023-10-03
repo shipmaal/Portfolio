@@ -24,7 +24,8 @@
                         "styles": [
                             "src/styles.scss"
                         ],
-                        "webWorkerTsConfig": "tsconfig.worker.json"
+                        "webWorkerTsConfig": "tsconfig.worker.json",
+                        
 
                     },
                     "configurations": {
@@ -91,7 +92,8 @@
                         ],
                         "scripts": [],
                         "karmaConfig": "karma.conf.js",
-                        "webWorkerTsConfig": "tsconfig.worker.json"
+                        "webWorkerTsConfig": "tsconfig.worker.json",
+                        
                     }
                 },
                 "lint": {
