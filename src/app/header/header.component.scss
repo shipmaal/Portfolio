@@ -1,13 +1,29 @@
-.container {
+.header {
   display: flex;
   justify-content: center;
   width: 100%;
   background: black;
-  transform-style: preserve-3d;
-  transform-origin: center center -75px;
-  transform: rotateX(90deg);
-  transition: transform 0.5s ease;
-  transition-delay: 1s;
+  
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.menu {
+    display: flex;
+    justify-content: center;
+    gap: 20px
+}
+
+.animation {
+    transform-style: preserve-3d;
+    transform-origin: center center -75px;
+    transform: rotateX(90deg);
+    transition: transform 0.5s ease;
+    transition-delay: 1s;
 }
 
 .title {

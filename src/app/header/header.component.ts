@@ -7,15 +7,15 @@ import { Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-header',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+    selector: 'app-header',
+    standalone: true,
+    imports: [CommonModule],
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements AfterViewInit {
     loadEventSub!: Subscription;
-    headerClass: string[] = ["container"];
+    headerClass: string[] = ["header", "animation"];
     titleMargin = "5vh 0 0 0"
     currentRoute!: string;
 
@@ -26,19 +26,27 @@ export class HeaderComponent implements AfterViewInit {
             .pipe(filter(event => event instanceof NavigationEnd))
             .subscribe(() => {
                 this.currentRoute = this.router.url;
-        })
+            })
     }
 
 
     ngAfterViewInit() {
         this.loadEventSub = this.lidService.getLoadEvent().subscribe(() => {
-            this.headerClass.push("rotate", "sticky");
-    })
-        
-        
+            this.headerClass.push("rotate");
+        })
+
+
         window.addEventListener('scroll', this.scrollFunction);
 
     }
+
+    menuItems = [
+        { label: "About Me", link: "/about" },
+        { label: "Education", link: "/education" },
+        { label: "Coding Experience", link: "/coding" },
+        { label: "Music  Experience", link: "/music" },
+        { label: "Contact Me", link: "/contact" }
+    ];
 
     private scrollFunction = () => {
         const height = 24;

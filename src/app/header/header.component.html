@@ -1,3 +1,15 @@
-<div #container [ngClass]="headerClass">
-    <h1 class="title" [style.margin]="titleMargin">Alan's Portfolio</h1>
+<div class="container">
+
+
+    <div #container [ngClass]="headerClass">
+        <h1 class="title" [style.margin]="titleMargin">Alan's Portfolio</h1>
+
+
+    </div>
+    <div class="menu">
+        <div *ngFor="let item of menuItems">
+            <div>{{ item.label }}</div>
+        </div>
+    </div>
+
 </div>
