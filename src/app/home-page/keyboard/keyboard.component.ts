@@ -7,7 +7,9 @@ import { Subscription } from 'rxjs';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
+
+import { ref, getDownloadURL } from 'firebase/storage';
+import { storage } from '../../../main';
 
 
 @Component({
@@ -22,26 +24,33 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
     sceneLoaded = false;
 
     constructor( private pianoService: PianoService) { }
+    LoadEventSub!: Subscription;
+    KeyRequestSub!: Subscription;
+    mouseStateSub!: Subscription;
+    manager!: THREE.LoadingManager;
 
-     LoadEventSub!: Subscription;
-     KeyRequestSub!: Subscription;
-     mouseStateSub!: Subscription;
-     manager!: THREE.LoadingManager;
+    pianoRenderer!: THREE.WebGLRenderer;
+    
+    downloadUrls: { [key: string]: string } = {
+        "brown_photostudio_04_1k.exr": "url",
+        "Keyboard.glb": "url",
+        "Piano.glb": "url"
+    }
 
-     pianoRenderer!: THREE.WebGLRenderer;
+;
 
-     clips!: THREE.AnimationClip[];
-     lidClip!: THREE.AnimationClip;
-     lidMixer!: THREE.AnimationMixer;
-     clipNames: string[] = [];
-     mixer!: THREE.AnimationMixer;
-     clock: THREE.Clock = new THREE.Clock();
-     intersectedArray: string[] = [];
+    clips!: THREE.AnimationClip[];
+    lidClip!: THREE.AnimationClip;
+    lidMixer!: THREE.AnimationMixer;
+    clipNames: string[] = [];
+    mixer!: THREE.AnimationMixer;
+    clock: THREE.Clock = new THREE.Clock();
+    intersectedArray: string[] = [];
 
-     raycaster: THREE.Raycaster = new THREE.Raycaster();
-     pointer: THREE.Vector2 = new THREE.Vector2();
-     camera!: THREE.PerspectiveCamera;
-     menuKeys = ["G.001Action", "A.001Action", "B.001Action", "CAction", "DAction"];
+    raycaster: THREE.Raycaster = new THREE.Raycaster();
+    pointer: THREE.Vector2 = new THREE.Vector2();
+    camera!: THREE.PerspectiveCamera;
+    menuKeys = ["G.001Action", "A.001Action", "B.001Action", "CAction", "DAction"];
 
     canvasStyle = { 'cursor': 'default', 'top': '0' };
 
@@ -86,6 +95,30 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
         }
     }
 
+    async downloadFile(filePath: string): Promise<string> {
+        try {
+            const url = await getDownloadURL(ref(storage, filePath));
+
+            // This can be downloaded directly:
+            const xhr = new XMLHttpRequest();
+            xhr.responseType = 'blob';
+            xhr.onload = (event) => {
+                const blob = xhr.response;
+                // Handle the blob as needed
+            };
+            xhr.open('GET', url.toString());
+            xhr.send();
+
+            return url
+            
+        } catch (error) {
+            // Handle any errors
+            console.error(error);
+            return('none')
+        }
+    }
+
+    
     
      createCanvas = () => {
         let canvas = document.querySelector("canvas");
@@ -118,90 +151,104 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
     }
 
 
-     onPointerMove = (event: MouseEvent) => {
+    onPointerMove = (event: MouseEvent) => {
         const rect = this.pianoRenderer.domElement.getBoundingClientRect();
 
         this.pointer.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
         this.pointer.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
     }
 
+    async loadEXRBackground() {
+        const backgroundUrl = await this.downloadFile('assets/brown_photostudio_04_1k.exr');
 
-    createPiano(): void {
+        return new Promise((resolve, reject) => {
+            new EXRLoader().load(backgroundUrl, (texture) => {
+                texture.mapping = THREE.EquirectangularReflectionMapping;
+                this.scene.environment = texture;
+                resolve(texture);
+            }, undefined, reject);
+        });
+    }
+
+    async createPiano(): Promise<void> {
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.25, 1000);
         this.scene.add(this.camera);
-
-        new EXRLoader()
-            .setPath('../../assets/')
-            .load('brown_photostudio_04_1k.exr', (texture) => {
-                texture.mapping = THREE.EquirectangularReflectionMapping;
-                this.scene.environment = texture;
-            });
-
-        this.createBase();
-        this.createKeyboard();
+ 
+        try {
+            await this.loadEXRBackground();
+            await this.loadBaseGLB();
+            await this.loadKeyboardGLB();
+        } catch (error) {
+            console.error('Error loading model file:', error);
+        }
 
         const light = new THREE.AmbientLight(0xfffada, 0.8);
         this.scene.add(light)
     }
 
 
-    createBase(): void {
-        new GLTFLoader()
-            .setPath('../../assets/')
-            .load('Piano.glb', (gltf) => {
-                const object = gltf.scene;
-                const base = object.children[2];
+    async loadBaseGLB() {
+        const baseUrl = await this.downloadFile('assets/Base.glb');
 
-                object.traverse((subObject) => {
-                    if (subObject instanceof THREE.Mesh) {
-                        subObject.material.envMapIntensity = 0;
-                    }
-                });
+        return new Promise<void>((resolve, reject) => {
+            new GLTFLoader()
+                .setPath('../../assets/')
+                .load('Base.glb', (gltf) => {
+                    const object = gltf.scene;
+                    const base = object.children[2];
 
-                this.lidClip = gltf.animations[1];
-                this.lidMixer = new THREE.AnimationMixer(object);
+                    object.traverse((subObject) => {
+                        if (subObject instanceof THREE.Mesh) {
+                            subObject.material.envMapIntensity = 0;
+                        }
+                    });
 
-                this.camera.position.x = base.position.x;
-                this.camera.position.y = base.position.y + 184;
-                this.camera.position.z = base.position.z + 150;
-                this.camera.lookAt(new THREE.Vector3(156, 0, -74));
+                    this.lidClip = gltf.animations[1];
+                    this.lidMixer = new THREE.AnimationMixer(object);
 
-                console.log(this.camera)
+                    this.camera.position.x = base.position.x;
+                    this.camera.position.y = base.position.y + 184;
+                    this.camera.position.z = base.position.z + 150;
+                    this.camera.lookAt(new THREE.Vector3(156, 0, -74));
 
-                this.scene.add(object);
-            });
+                    this.scene.add(object);
+                    resolve();
+                }, undefined, reject);
+        });
     }
 
 
-    createKeyboard(): void {
-        new GLTFLoader(this.manager)
-            .setPath('../../assets/')
-            .load('Keyboard.glb', (gltf) => {
-                this.clips = gltf.animations;
-                this.clips.forEach((clip: { name: string; }) => {
-                    this.clipNames.push(clip.name);
-                });
+    async  loadKeyboardGLB() {
+        return new Promise<void>((resolve, reject) => {
+            new GLTFLoader(this.manager)
+                .setPath('../../assets/')
+                .load('Keyboard.glb', (gltf) => {
+                    this.clips = gltf.animations;
+                    this.clips.forEach((clip) => {
+                        this.clipNames.push(clip.name);
+                    });
 
-                const object = gltf.scene;
-                console.log(object)
-                object.children.forEach((key) => {
-                    if (key.name.includes('#')) {
-                        key.traverse((mesh) => {
-                            if (mesh instanceof THREE.Mesh && !(mesh.name.includes('_1'))) {
-                                mesh.material.envMapIntensity = 0.25;
-                            }
-                        })
-                    }
-                })
+                    const object = gltf.scene;
+                    console.log(object);
+                    object.children.forEach((key) => {
+                        if (key.name.includes('#')) {
+                            key.traverse((mesh) => {
+                                if (mesh instanceof THREE.Mesh && !(mesh.name.includes('_1'))) {
+                                    mesh.material.envMapIntensity = 0.25;
+                                }
+                            });
+                        }
+                    });
 
-                this.mixer = new THREE.AnimationMixer(object);
-                this.scene.add(object);
-                this.sceneLoaded = true;
+                    this.mixer = new THREE.AnimationMixer(object);
+                    this.scene.add(object);
+                    this.sceneLoaded = true;
 
-            });
+                    resolve();
+                }, undefined, reject);
+        });
     }
-
 
      animate = () => {
         this.resizeCanvasToDisplaySize();
