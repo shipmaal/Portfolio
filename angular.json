@@ -1,192 +1,134 @@
 {
-    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-    "version": 1,
-    "newProjectRoot": "projects",
-    "projects": {
-        "AlanPortfolio": {
-            "architect": {
-                "build": {
-                    "builder": "@angular-devkit/build-angular:browser",
-                    "options": {
-                        
-
-                        "outputPath": "dist/AlanPortfolio/browser",
-                        "index": "src/index.html",
-                        "main": "src/main.ts",
-                        "polyfills": [
-                            "zone.js"
-                        ],
-                        "tsConfig": "tsconfig.app.json",
-                        "assets": [
-                            "src/favicon.ico",
-                            "src/assets"
-                        ],
-                        "styles": [
-                            "src/styles.scss"
-                        ],
-                        "webWorkerTsConfig": "tsconfig.worker.json",
-                        
-
-                    },
-                    "configurations": {
-                        "production": {
-                            "budgets": [
-                                {
-                                    "type": "initial",
-                                    "maximumWarning": "500kb",
-                                    "maximumError": "6mb"
-                                },
-                                {
-                                    "type": "anyComponentStyle",
-                                    "maximumWarning": "2kb",
-                                    "maximumError": "4kb"
-                                }
-                            ],
-                            "outputHashing": "all"
-                        },
-                        "development": {
-                            "buildOptimizer": false,
-                            "optimization": false,
-                            "vendorChunk": true,
-                            "extractLicenses": false,
-                            "sourceMap": true,
-                            "namedChunks": true,
-                            "fileReplacements": [
-                              {
-                                "replace": "src/environments/environment.ts",
-                                "with": "src/environments/environment.development.ts"
-                              }
-                            ]
-                        }
-                    },
-                    "defaultConfiguration": "production"
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "AlanPortfolio": {
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/AlanPortfolio/browser",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
+            "webWorkerTsConfig": "tsconfig.worker.json"
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "6mb"
                 },
-                "serve": {
-                    "builder": "@angular-devkit/build-angular:dev-server",
-                    "configurations": {
-                        "production": {
-                            "browserTarget": "AlanPortfolio:build:production"
-                        },
-                        "development": {
-                            "browserTarget": "AlanPortfolio:build:development"
-                        }
-                    },
-                    "defaultConfiguration": "development"
-
-
-                },
-                "extract-i18n": {
-                    "builder": "@angular-devkit/build-angular:extract-i18n",
-                    "options": {
-                        "browserTarget": "AlanPortfolio:build"
-                    }
-                },
-                "test": {
-                    "builder": "@angular-devkit/build-angular:karma",
-                    "options": {
-                        "polyfills": [
-                            "zone.js",
-                            "zone.js/testing"
-                        ],
-                        "tsConfig": "tsconfig.spec.json",
-                        "assets": [
-                            "src/favicon.ico",
-                            "src/assets"
-                        ],
-                        "styles": [
-                            "src/styles.scss"
-                        ],
-                        "scripts": [],
-                        "karmaConfig": "karma.conf.js",
-                        "webWorkerTsConfig": "tsconfig.worker.json",
-                        
-                    }
-                },
-                "lint": {
-                    "builder": "@angular-eslint/builder:lint",
-                    "options": {
-                        "lintFilePatterns": [
-                            "src/**/*.ts",
-                            "src/**/*.html"
-                        ]
-                    }
-                },
-                "server": {
-                  "builder": "@angular-devkit/build-angular:server",
-                  "options": {
-                    "outputPath": "dist/AlanPortfolio/server",
-                    "main": "server.ts",
-                    "tsConfig": "tsconfig.server.json"
-                  },
-                  "configurations": {
-                    "production": {
-                      "outputHashing": "media"
-                    },
-                    "development": {
-                      "buildOptimizer": false,
-                      "optimization": false,
-                      "sourceMap": true,
-                      "extractLicenses": false,
-                      "vendorChunk": true,
-                      "fileReplacements": [
-                        {
-                          "replace": "src/environments/environment.ts",
-                          "with": "src/environments/environment.development.ts"
-                        }
-                      ]
-                    }
-                  },
-                  "defaultConfiguration": "production"
-                },
-                "serve-ssr": {
-                  "builder": "@nguniversal/builders:ssr-dev-server",
-                  "configurations": {
-                    "development": {
-                      "browserTarget": "AlanPortfolio:build:development",
-                      "serverTarget": "AlanPortfolio:server:development"
-                    },
-                    "production": {
-                      "browserTarget": "AlanPortfolio:build:production",
-                      "serverTarget": "AlanPortfolio:server:production"
-                    }
-                  },
-                  "defaultConfiguration": "development"
-                },
-                "prerender": {
-                  "builder": "@nguniversal/builders:prerender",
-                  "options": {
-                    "routes": [
-                      "/", "/about", "/eduction", "/coding", "/music", "/contact"
-                    ]
-                  },
-                  "configurations": {
-                    "production": {
-                      "browserTarget": "AlanPortfolio:build:production",
-                      "serverTarget": "AlanPortfolio:server:production"
-                    },
-                    "development": {
-                      "browserTarget": "AlanPortfolio:build:development",
-                      "serverTarget": "AlanPortfolio:server:development"
-                    }
-                  },
-                  "defaultConfiguration": "production"
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
                 }
+              ],
+              "outputHashing": "all"
             },
-            "prefix": "app",
-            "projectType": "application",
-            "root": "",
-            "schematics": {
-                "@schematics/angular:component": {
-                    "style": "scss"
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
                 }
+              ]
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "AlanPortfolio:build:production"
             },
-            "sourceRoot": "src"
+            "development": {
+              "browserTarget": "AlanPortfolio:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "AlanPortfolio:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "tsconfig.spec.json",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
+            "scripts": [],
+            "karmaConfig": "karma.conf.js",
+            "webWorkerTsConfig": "tsconfig.worker.json"
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
+        },
+        
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "version": 2,
+            "browserTarget": "AlanPortfolio:build:production"
+            
+          }
         }
-    },
-    "cli": {
-        "analytics": false,
-        "schematicCollections": [
-            "@angular-eslint/schematics"
-        ]
+      },
+      "prefix": "app",
+      "projectType": "application",
+      "root": "",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "sourceRoot": "src"
     }
+  },
+  "cli": {
+    "analytics": false,
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
+  }
 }

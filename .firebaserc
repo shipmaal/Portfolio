@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "portfolio-ea11e"
+  },
+  "targets": {
+    "portfolio-ea11e": {
+      "hosting": {
+        "AlanPortfolio": [
+          "portfolio-ea11e"
+        ]
+      }
+    }
   }
 }

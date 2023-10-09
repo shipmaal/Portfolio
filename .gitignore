@@ -31,6 +31,7 @@ yarn-error.log
 
 # Miscellaneous
 firebase.config.ts
+environments/
 .env
 /.angular/cache
 .sass-cache/
@@ -44,3 +45,8 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Firebase
+.firebase
+*-debug.log
+.runtimeconfig.json

@@ -193,8 +193,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
 
         return new Promise<void>((resolve, reject) => {
             new GLTFLoader()
-                .setPath('../../assets/')
-                .load('Base.glb', (gltf) => {
+                .load(baseUrl, (gltf) => {
                     const object = gltf.scene;
                     const base = object.children[2];
 
@@ -219,11 +218,12 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
     }
 
 
-    async  loadKeyboardGLB() {
+    async loadKeyboardGLB() {
+        const keyboardUrl = await this.downloadFile('assets/Keyboard.glb');
+
         return new Promise<void>((resolve, reject) => {
             new GLTFLoader(this.manager)
-                .setPath('../../assets/')
-                .load('Keyboard.glb', (gltf) => {
+                .load(keyboardUrl, (gltf) => {
                     this.clips = gltf.animations;
                     this.clips.forEach((clip) => {
                         this.clipNames.push(clip.name);
