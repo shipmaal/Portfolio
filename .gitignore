@@ -31,7 +31,7 @@ yarn-error.log
 
 # Miscellaneous
 firebase.config.ts
-environments/
+environments/environments
 .env
 /.angular/cache
 .sass-cache/

@@ -9,6 +9,8 @@ import { firebaseConfig } from 'firebase.config';
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage } from "firebase/storage"
+import { getPerformance } from "firebase/performance";
+
 
 
 bootstrapApplication(AppComponent, appConfig)
@@ -19,4 +21,5 @@ bootstrapApplication(AppComponent, appConfig)
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+const performance = getPerformance(app);
 export const storage = getStorage(app);

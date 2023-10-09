@@ -21,8 +21,7 @@
             ],
             "styles": [
               "src/styles.scss"
-            ],
-            "webWorkerTsConfig": "tsconfig.worker.json"
+            ]
           },
           "configurations": {
             "production": {
@@ -46,13 +45,7 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.development.ts"
-                }
-              ]
+              "namedChunks": true
             }
           },
           "defaultConfiguration": "production"
@@ -91,8 +84,7 @@
               "src/styles.scss"
             ],
             "scripts": [],
-            "karmaConfig": "karma.conf.js",
-            "webWorkerTsConfig": "tsconfig.worker.json"
+            "karmaConfig": "karma.conf.js"
           }
         },
         "lint": {
