@@ -7,12 +7,18 @@ $overlap: -100px;
     justify-self: center;
     justify-content: left;
 
-    @for $i from 1 through 5 {
+    @for $i from 1 through 4 {
         .menu:nth-child(#{$i}) {
             top: $overlap;
             left: ($i - 1) * $step;
             transform: translateX(-4vh + 0.25 * $i);
         }
+    }
+
+    .menu:last-child {
+        top: $overlap;
+        left: 4 * $step;
+        transform: translateX(-4vh + 1.35);
     }
 }
 
@@ -33,11 +39,12 @@ $overlap: -100px;
     border-width: 3.2px;
     border-radius: 20px;
     text-align: center;
-    transition: background-color ease 1s;
+    transition: background-color ease 0.5s;
 }
 
 .menu:hover {
     cursor: pointer;
+    background-color: rgba(cornsilk, 0.32);
 }
 
 span {
@@ -48,11 +55,10 @@ span {
 .vertical {
     top: $overlap;
     position: absolute;
-    background-color: cadetblue;
     opacity: 0;
     width: 1 * $step;
-    height: 10vh;
-    transform: translateY(-10px);
+    height: 2vh;
+    transform: translateY(11.5vh);
     left: 0.1 * $step;
 }
 

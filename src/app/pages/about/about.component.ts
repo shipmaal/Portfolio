@@ -18,7 +18,6 @@ export class AboutComponent implements OnInit {
 
         
     ngOnInit() {
-        // Fetch and handle the download URL in ngOnInit or another appropriate lifecycle hook
          this.downloadImage('images/Alan-0001.jpeg');
     }
 
@@ -26,21 +25,20 @@ export class AboutComponent implements OnInit {
         try {
             const url = await getDownloadURL(ref(storage, imagePath));
 
-            // This can be downloaded directly:
             const xhr = new XMLHttpRequest();
             xhr.responseType = 'blob';
             xhr.onload = (event) => {
                 const blob = xhr.response;
-                // Handle the blob as needed
             };
             xhr.open('GET', url.toString());
             xhr.send();
 
-            const img = document.getElementById('portraitImage');
-            if (img != null) {
+           
+            try {
                 this.portraitImageSrc = url;
-               /* img.setAttribute('src', url);*/
             }
+            catch { }
+            
         } catch (error) {
             // Handle any errors
             console.error(error);

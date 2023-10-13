@@ -27,7 +27,13 @@ export class MenuComponent implements OnInit {
     }
 
     
-    menuText: string[] = ["About Me", "Education", "Coding Experience", "Music  Experience", "Contact Me"];
+    menuItems = [
+        { label: "About Me", link: "/about" },
+        { label: "Education", link: "/education" },
+        { label: "Coding Experience", link: "/coding" },
+        { label: "Music  Experience", link: "/music" },
+        { label: "Contact Me", link: "/contact" }
+    ];
     buttonStyle: string[] = Array(5).fill('hidden');
 
     controllerStates: { [key: string]: boolean[] } = {
@@ -78,22 +84,19 @@ export class MenuComponent implements OnInit {
     onMouseEnter(index: number) {
         this.controllerStates['button'][index] = true;
         this.menuController();
-        console.log(this.controllerStates['button']);
     }
 
 
     onMouseLeave(index: number) {
         this.controllerStates['button'][index] = false;
         this.menuController();
-        console.log(this.controllerStates['button']);
        
     }
 
 
     onClick(index: number) {
-        const page = this.menuText[index].toLowerCase().split(' ')[0];
-        console.log(page)
-        this.router.navigate(['/'+page])
+        const page = this.menuItems[index].link;
+        this.router.navigate([page]);
     }
 
     

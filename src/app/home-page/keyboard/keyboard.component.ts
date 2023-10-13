@@ -8,8 +8,11 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 
+import * as Tone from 'Tone';
+
 import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../main';
+
 
 
 @Component({
@@ -23,59 +26,46 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
     scene: THREE.Scene = new THREE.Scene();
     sceneLoaded = false;
 
-    constructor( private pianoService: PianoService) { }
     LoadEventSub!: Subscription;
     KeyRequestSub!: Subscription;
     mouseStateSub!: Subscription;
-    manager!: THREE.LoadingManager;
 
+    manager: THREE.LoadingManager = new THREE.LoadingManager();
     pianoRenderer!: THREE.WebGLRenderer;
-    
-    downloadUrls: { [key: string]: string } = {
-        "brown_photostudio_04_1k.exr": "url",
-        "Keyboard.glb": "url",
-        "Piano.glb": "url"
-    }
 
-;
-
-    clips!: THREE.AnimationClip[];
+    clips: THREE.AnimationClip[] = [];
     lidClip!: THREE.AnimationClip;
     lidMixer!: THREE.AnimationMixer;
     clipNames: string[] = [];
     mixer!: THREE.AnimationMixer;
     clock: THREE.Clock = new THREE.Clock();
     intersectedArray: string[] = [];
-
     raycaster: THREE.Raycaster = new THREE.Raycaster();
     pointer: THREE.Vector2 = new THREE.Vector2();
     camera!: THREE.PerspectiveCamera;
-    menuKeys = ["G.001Action", "A.001Action", "B.001Action", "CAction", "DAction"];
 
-    canvasStyle = { 'cursor': 'default', 'top': '0' };
+    menuKeys: string[] = ["G.001Action", "A.001Action", "B.001Action", "CAction", "DAction"];
+    canvasStyle: { [key: string]: string } = { 'cursor': 'default', 'top': '0' };
 
-
-    ngOnInit(): void {
-        window.addEventListener('pointermove', this.onPointerMove);
-        this.initFunctions();
-    }
-
-
-    ngAfterViewInit() {
-        this.createCanvas();
-        this.createPiano();
-        console.log(this.scene)
-        this.animate();
-    }
+    sampler: Tone.Sampler = new Tone.Sampler({
+        urls: {
+            "F#3": "Fs3.mp3",
+            A3: "A3.mp3",
+            C4: "C4.mp3",
+            "D#4": "Ds4.mp3",
+        },
+        release: 1,
+        baseUrl: "https://tonejs.github.io/audio/salamander/",
+    }).toDestination();
 
 
-    initFunctions(pianoService = this.pianoService): void {
+    constructor(private pianoService: PianoService) {
         this.pianoService.getLoadEvent().subscribe(() => {
             this.lidup();
         });
 
         this.pianoService.getKeyRequest().subscribe((key) => {
-            this.keyManager(key);
+            this.menuKeyManager(key);
         });
 
         this.pianoService.getMouseState().subscribe((state) => {
@@ -86,25 +76,32 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
             this.canvasStyle['top'] = '-25vh';
         });
 
-
-        this.manager = new THREE.LoadingManager();
         this.manager.onLoad = function () {
-            setTimeout(() => {
-                pianoService.sendLoadEvent();
-            }, 2000); // Delay of 2000 milliseconds (2 seconds)
+            pianoService.sendLoadEvent();
         }
     }
 
+    ngOnInit(): void {
+        window.addEventListener('pointermove', this.onPointerMove);
+    }
+
+
+    ngAfterViewInit() {
+        this.createCanvas();
+        this.createPiano();
+        this.animate();
+    }
+
+
     async downloadFile(filePath: string): Promise<string> {
         try {
+            console.log('downloading')
             const url = await getDownloadURL(ref(storage, filePath));
 
-            // This can be downloaded directly:
             const xhr = new XMLHttpRequest();
             xhr.responseType = 'blob';
             xhr.onload = (event) => {
                 const blob = xhr.response;
-                // Handle the blob as needed
             };
             xhr.open('GET', url.toString());
             xhr.send();
@@ -112,13 +109,11 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
             return url
             
         } catch (error) {
-            // Handle any errors
             console.error(error);
             return('none')
         }
     }
 
-    
     
      createCanvas = () => {
         let canvas = document.querySelector("canvas");
@@ -152,23 +147,14 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
 
 
     onPointerMove = (event: MouseEvent) => {
+        Tone.start();
         const rect = this.pianoRenderer.domElement.getBoundingClientRect();
 
         this.pointer.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
         this.pointer.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
     }
 
-    async loadEXRBackground() {
-        const backgroundUrl = await this.downloadFile('assets/brown_photostudio_04_1k.exr');
-
-        return new Promise((resolve, reject) => {
-            new EXRLoader().load(backgroundUrl, (texture) => {
-                texture.mapping = THREE.EquirectangularReflectionMapping;
-                this.scene.environment = texture;
-                resolve(texture);
-            }, undefined, reject);
-        });
-    }
+    
 
     async createPiano(): Promise<void> {
         this.scene = new THREE.Scene();
@@ -188,12 +174,25 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
     }
 
 
+    async loadEXRBackground() {
+        //const backgroundUrl = await this.downloadFile('assets/brown_photostudio_04_1k.exr');
+        const backgroundUrl = 'assets/brown_photostudio_04_1k.exr';
+
+        return new Promise((resolve, reject) => {
+            new EXRLoader().load(backgroundUrl, (texture) => {
+                texture.mapping = THREE.EquirectangularReflectionMapping;
+                this.scene.environment = texture;
+                resolve(texture);
+            }, undefined, reject);
+        });
+    }
+
     async loadBaseGLB() {
-        const baseUrl = await this.downloadFile('assets/Base.glb');
+        //const baseUrl = await this.downloadFile('assets/Base.glb');
+        const baseUrl = 'assets/Base.glb';
 
         return new Promise<void>((resolve, reject) => {
-            new GLTFLoader()
-                .load(baseUrl, (gltf) => {
+            new GLTFLoader().load(baseUrl, (gltf) => {
                     const object = gltf.scene;
                     const base = object.children[2];
 
@@ -219,18 +218,17 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
 
 
     async loadKeyboardGLB() {
-        const keyboardUrl = await this.downloadFile('assets/Keyboard.glb');
+        //const keyboardUrl = await this.downloadFile('assets/Keyboard.glb');
+        const keyboardUrl = 'assets/Keyboard.glb';
 
         return new Promise<void>((resolve, reject) => {
-            new GLTFLoader(this.manager)
-                .load(keyboardUrl, (gltf) => {
+            new GLTFLoader(this.manager).load(keyboardUrl, (gltf) => {
                     this.clips = gltf.animations;
                     this.clips.forEach((clip) => {
                         this.clipNames.push(clip.name);
                     });
 
                     const object = gltf.scene;
-                    console.log(object);
                     object.children.forEach((key) => {
                         if (key.name.includes('#')) {
                             key.traverse((mesh) => {
@@ -244,9 +242,8 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
                     this.mixer = new THREE.AnimationMixer(object);
                     this.scene.add(object);
                     this.sceneLoaded = true;
-
                     resolve();
-                }, undefined, reject);
+            }, undefined, reject);
         });
     }
 
@@ -264,7 +261,9 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
     };
 
 
-     keyAction(animationName: string, timeScale: number) {
+    keyAction(animationName: string, timeScale: number) {
+        console.log(animationName)
+        const noteName = this.parseToNote(animationName);
         const clipNum = this.clipNames.indexOf(animationName);
         const action = this.mixer.clipAction(this.clips[clipNum]);
 
@@ -277,9 +276,9 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
     }
 
 
-     keyManager(key: [number, boolean]) {
+     menuKeyManager(key: [number, boolean]) {
         const keyIndex = key[0];
-        const timeScale = Number(key[1]) * 2 - 1; // turns boolean to 1(down) 0(up) to the appropriate time scale
+        const timeScale = 1.2 * (Number(key[1]) * 2 - 1); // turns boolean to 1(down) 0(up) to the appropriate time scale
 
         const intersectedKey = this.menuKeys[keyIndex];
         this.keyAction(intersectedKey, timeScale);
@@ -303,8 +302,27 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
         }
     }
 
+    keyboardManager(intersectedKey: string, intersectedAction: number) {
+        const timeScale = 1.2 * (intersectedAction * 2) - 1;
+        const noteName = this.parseToNote(intersectedKey);
 
-     intersectionCheck() {
+        if (timeScale > 0) {
+            this.sampler.triggerAttack(noteName);
+        }
+        else {
+            this.sampler.triggerRelease(noteName);
+        }
+
+        if (this.menuKeys.includes(intersectedKey)) {
+            const key = this.menuKeys.indexOf(intersectedKey);
+            const down = intersectedAction !== 0;
+            this.pianoService.sendMenuEvent(key, down);
+        } else {
+            this.keyAction(intersectedKey, timeScale);
+        }
+    }
+
+    intersectionCheck() {
         let intersectedName: string;
 
         this.raycaster.setFromCamera(this.pointer, this.camera);
@@ -340,19 +358,30 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
         if (this.intersectedArray[0] !== this.intersectedArray[1]) {
             this.intersectedArray.forEach((intersectedKey) => {
                 const clipNum = this.clipNames.indexOf(intersectedKey);
-                const intersectedIndex = this.intersectedArray.indexOf(intersectedKey);
+                const intersectedAction = this.intersectedArray.indexOf(intersectedKey);
 
                 if (clipNum !== -1) {
-                    if (this.menuKeys.includes(intersectedKey)) {
-                        const key = this.menuKeys.indexOf(intersectedKey);
-                        const down = intersectedIndex !== 0;
-                        this.pianoService.sendMenuEvent(key, down);
-                    } else {
-                        this.keyAction(intersectedKey, (intersectedIndex * 2) - 1);
-                    }
+                    this.keyboardManager(intersectedKey, intersectedAction);
                 }
             });
         }
     }
+
+    parseToNote(animationName: string): string {
+        if (animationName.includes('000')) {
+            animationName = animationName.replace('.000Action', '2');
+        }
+
+        else if (animationName.includes('001')) {
+            animationName = animationName.replace('.001Action', '3');
+        }
+
+        else {
+            animationName = animationName.replace('Action', '4');
+        }
+
+        return animationName
+    }
 }
+
 

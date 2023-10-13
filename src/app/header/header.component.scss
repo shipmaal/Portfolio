@@ -1,9 +1,9 @@
 .header {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  background: black;
-  
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    background: black;
+    transform: rotateX(90deg);
 }
 
 .container {
@@ -15,13 +15,34 @@
 .menu {
     display: flex;
     justify-content: center;
-    gap: 20px
+    gap: 24px;
+   
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    padding: 2.4px 16px;
+    font-size: 20px;
+
+    border-style: solid;
+    border-color: black;
+    border-width: 2.4px;
+    border-radius: 20px;
+}
+
+.menu-item:hover {
+    background-color: rgba(cornsilk, 0.16);
+    border-color: cornsilk;
+    border-style: solid;
+    border-width: 2.4px;
+    border-radius: 8px;
 }
 
 .animation {
     transform-style: preserve-3d;
     transform-origin: center center -75px;
-    transform: rotateX(90deg);
     transition: transform 0.5s ease;
     transition-delay: 1s;
 }

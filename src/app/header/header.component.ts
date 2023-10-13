@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 
@@ -15,30 +15,13 @@ import { filter } from 'rxjs/operators';
 })
 export class HeaderComponent implements AfterViewInit {
     loadEventSub!: Subscription;
-    headerClass: string[] = ["header", "animation"];
-    titleMargin = "5vh 0 0 0"
+    headerClass: string[] = ["header"];
+    titleMargin = "2vh 0 0 0"
     currentRoute!: string;
+    displayMenu = false;
+    canvasStyle = { 'cursor': 'default', 'opacity': '100' };
+    menuStyle = {};
 
-    constructor(private lidService: PianoService, private router: Router) {
-        this.currentRoute = this.router.url;
-
-        this.router.events
-            .pipe(filter(event => event instanceof NavigationEnd))
-            .subscribe(() => {
-                this.currentRoute = this.router.url;
-            })
-    }
-
-
-    ngAfterViewInit() {
-        this.loadEventSub = this.lidService.getLoadEvent().subscribe(() => {
-            this.headerClass.push("rotate");
-        })
-
-
-        window.addEventListener('scroll', this.scrollFunction);
-
-    }
 
     menuItems = [
         { label: "About Me", link: "/about" },
@@ -48,14 +31,81 @@ export class HeaderComponent implements AfterViewInit {
         { label: "Contact Me", link: "/contact" }
     ];
 
-    private scrollFunction = () => {
-        const height = 24;
-        if (window.scrollY > height) {
-            this.titleMargin = "1vh 0 1vh 0";
-        } else {
-            this.titleMargin = "5vh 0 0 0";
-        }
+    constructor(private lidService: PianoService, private router: Router) {
+        this.currentRoute = this.router.url;
 
+        this.router.events
+            .pipe(filter(event => event instanceof NavigationEnd))
+            .subscribe(() => {
+                this.currentRoute = this.router.url;
+                if (this.currentRoute != '/') {
+                    this.displayMenu = true;
+                    const animationIndex = this.headerClass.indexOf("animation");
+                    if ((animationIndex) > -1) {
+                        this.headerClass[animationIndex] = "rotate";
+                    }
+                    this.headerClass.push("rotate");
+                } else {
+                    this.displayMenu = false;
+                    this.canvasStyle['opacity'] = '0';
+                    this.headerClass = ["header"];
+
+                    setTimeout(() => {
+                        this.canvasStyle['opacity'] = '100';
+                        this.headerClass.push("animation");
+
+                    }, 500);
+                }
+
+            });
+
+    }
+
+    
+
+    ngAfterViewInit() {
+       
+        
+        this.loadEventSub = this.lidService.getLoadEvent().subscribe(() => {
+            this.headerClass.push("rotate");
+        })
+
+
+        window.addEventListener('scroll', this.scrollFunction);
+
+
+    }
+    
+
+    private scrollFunction = () => {
+        //const height = 24;
+        //if (window.scrollY > height) {
+        //    this.titleMargin = "1vh 0 1vh 0";
+        //} else {
+        //    this.titleMargin = "2vh 0 0 0";
+        //}
+
+    }
+
+    onMouseEnter(index: number) {
+        if (this.displayMenu) {
+            this.canvasStyle['cursor'] = 'pointer';
+        }
+    }
+
+
+    onMouseLeave(index: number) {
+        this.canvasStyle['cursor'] = 'default';
+    }
+
+
+    onClick(index: number) {
+        console.log(index)
+        if (index === -1) {
+            this.router.navigate([''])
+        }
+        const page = this.menuItems[index].link
+        this.router.navigate([page])
     }
 
 }
