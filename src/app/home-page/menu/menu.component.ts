@@ -67,7 +67,6 @@ export class MenuComponent implements OnInit {
 
     keyAction(index: number, keyStatus: boolean) {
         const elementStates = ["hidden", "visible"];
-        this.pianoService.sendKeyRequest(index, keyStatus);
         this.controllerStates["keyStates"][index] = keyStatus;
         this.buttonStyle[index] = elementStates[Number(keyStatus)];
     }

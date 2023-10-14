@@ -10,6 +10,8 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 
 import * as Tone from 'Tone';
 
+import { Vector } from 'vector-ts'
+
 import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../main';
 
@@ -46,13 +48,17 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
 
     menuKeys: string[] = ["G.001Action", "A.001Action", "B.001Action", "CAction", "DAction"];
     canvasStyle: { [key: string]: string } = { 'cursor': 'default', 'top': '0' };
+    pressedKeys!: Vector<string>;
 
     sampler: Tone.Sampler = new Tone.Sampler({
         urls: {
+            "C3": "C3.mp3",
+            "D#3": "Ds3.mp3",
             "F#3": "Fs3.mp3",
             A3: "A3.mp3",
             C4: "C4.mp3",
             "D#4": "Ds4.mp3",
+            "F#4": "Fs4.mp3"
         },
         release: 1,
         baseUrl: "https://tonejs.github.io/audio/salamander/",
@@ -62,10 +68,6 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
     constructor(private pianoService: PianoService) {
         this.pianoService.getLoadEvent().subscribe(() => {
             this.lidup();
-        });
-
-        this.pianoService.getKeyRequest().subscribe((key) => {
-            this.menuKeyManager(key);
         });
 
         this.pianoService.getMouseState().subscribe((state) => {
@@ -83,7 +85,12 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         window.addEventListener('pointermove', this.onPointerMove);
+
+        window.addEventListener("keydown", (event) => this.onKeyPress(event, "pressed"));
+        window.addEventListener("keyup", (event) => this.onKeyPress(event, "released"));
     }
+
+    
 
 
     ngAfterViewInit() {
@@ -154,6 +161,49 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
         this.pointer.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
     }
 
+
+    onKeyPress = (event: KeyboardEvent, action: string) => {
+        if (event.repeat) {
+            return;
+        }
+
+        console.log('key')
+        const key: string = event.key;
+        const keyConversion: { [key: string]: string } = {
+            'z': 'A.000Action',
+            'x': 'A#.000Action',
+            'c': 'B.000Action',
+            'v': 'C.001Action',
+            'q': 'C#.001Action',
+            'a': 'D.001Action',
+            'w': 'D#.001Action',
+            's': 'E.001Action',
+            'd': 'F.001Action',
+            'r': 'F#.001Action',
+            'f': 'G.001Action',
+            't': 'G#.001Action',
+            'g': 'A.001Action',
+            'y': 'A#.001Action',
+            'h': 'B.001Action',
+            'j': 'CAction',
+            'i': 'C#Action',
+            'k': 'DAction',
+            'o': 'D#Action',
+            'l': 'EAction',
+            ';': 'FAction',
+            '[': 'F#Action',
+            "'": 'GAction',
+            ']': 'G#Action',
+            'm': 'AAction',
+            ',': 'A#Action',
+            '.': 'BAction',
+            '/': 'C.000Action',
+        }
+
+        action = action.replace('pressed', '1');
+        action = action.replace('released', '0');
+        this.keyboardManager(keyConversion[key], Number(action), 'key');
+    }
     
 
     async createPiano(): Promise<void> {
@@ -258,7 +308,25 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
         this.render();
 
         requestAnimationFrame(this.animate);
-    };
+    }
+
+
+    lidup(): void {
+        const action = this.lidMixer.clipAction(this.lidClip);
+        action.setLoop(THREE.LoopOnce, 1);
+        action.clampWhenFinished = true;
+        action.timeScale = 0.8;
+        action.play();
+    }
+
+
+    render = () => {
+        this.pianoRenderer.render(this.scene, this.camera);
+
+        if (this.sceneLoaded) {
+            this.intersectionCheck();
+        }
+    }
 
 
     keyAction(animationName: string, timeScale: number) {
@@ -276,7 +344,8 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
     }
 
 
-     menuKeyManager(key: [number, boolean]) {
+
+     menuKeyManager(key: [number, boolean]) { // only called from service in menu
         const keyIndex = key[0];
         const timeScale = 1.2 * (Number(key[1]) * 2 - 1); // turns boolean to 1(down) 0(up) to the appropriate time scale
 
@@ -285,24 +354,8 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
     }
 
 
-     lidup(): void {
-        const action = this.lidMixer.clipAction(this.lidClip);
-        action.setLoop(THREE.LoopOnce, 1);
-        action.clampWhenFinished = true;
-        action.timeScale = 0.8;
-        action.play();
-    }
-
-
-     render = () => {
-        this.pianoRenderer.render(this.scene, this.camera);
-
-        if (this.sceneLoaded) {
-            this.intersectionCheck();
-        }
-    }
-
-    keyboardManager(intersectedKey: string, intersectedAction: number) {
+    keyboardManager(intersectedKey: string, intersectedAction: number, interaction: string = 'mouse') { // action: 0 = up, 1 = down
+        console.log(intersectedKey);
         const timeScale = 1.2 * (intersectedAction * 2) - 1;
         const noteName = this.parseToNote(intersectedKey);
 
@@ -313,14 +366,16 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
             this.sampler.triggerRelease(noteName);
         }
 
-        if (this.menuKeys.includes(intersectedKey)) {
+        this.keyAction(intersectedKey, timeScale);
+
+
+        if (this.menuKeys.includes(intersectedKey) && interaction === 'mouse') {
             const key = this.menuKeys.indexOf(intersectedKey);
             const down = intersectedAction !== 0;
             this.pianoService.sendMenuEvent(key, down);
-        } else {
-            this.keyAction(intersectedKey, timeScale);
-        }
+        } 
     }
+
 
     intersectionCheck() {
         let intersectedName: string;
@@ -368,6 +423,9 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
     }
 
     parseToNote(animationName: string): string {
+        if (animationName === 'C.000Action') {
+            animationName = 'C5'
+        }
         if (animationName.includes('000')) {
             animationName = animationName.replace('.000Action', '2');
         }
