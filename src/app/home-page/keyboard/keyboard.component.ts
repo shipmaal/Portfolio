@@ -1,16 +1,15 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, NavigationEnd } from '@angular/router';
 
 import { PianoService } from './../../piano.service';
-import { Subscription } from 'rxjs';
+import { Subscription, filter } from 'rxjs';
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 
 import * as Tone from 'Tone';
-
-import { Vector } from 'vector-ts'
 
 import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../main';
@@ -24,7 +23,7 @@ import { storage } from '../../../main';
     imports: [CommonModule],
     standalone: true
 })
-export class KeyboardComponent implements OnInit, AfterViewInit {
+export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
     scene: THREE.Scene = new THREE.Scene();
     sceneLoaded = false;
 
@@ -48,7 +47,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
 
     menuKeys: string[] = ["G.001Action", "A.001Action", "B.001Action", "CAction", "DAction"];
     canvasStyle: { [key: string]: string } = { 'cursor': 'default', 'top': '0' };
-    pressedKeys!: Vector<string>;
+    currentRoute: string;
 
     sampler: Tone.Sampler = new Tone.Sampler({
         urls: {
@@ -65,7 +64,17 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
     }).toDestination();
 
 
-    constructor(private pianoService: PianoService) {
+    constructor(private pianoService: PianoService, private router: Router) {
+
+        this.currentRoute = this.router.url;
+
+        this.router.events
+            .pipe(filter(event => event instanceof NavigationEnd))
+            .subscribe(() => {
+                this.currentRoute = this.router.url;
+            });
+            
+
         this.pianoService.getLoadEvent().subscribe(() => {
             this.lidup();
         });
@@ -86,17 +95,22 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         window.addEventListener('pointermove', this.onPointerMove);
 
-        window.addEventListener("keydown", (event) => this.onKeyPress(event, "pressed"));
-        window.addEventListener("keyup", (event) => this.onKeyPress(event, "released"));
+        document.addEventListener("keydown", (event) => this.onKeyPress(event, "pressed"));
+        document.addEventListener("keyup", (event) => this.onKeyPress(event, "released"));
     }
 
     
-
-
     ngAfterViewInit() {
         this.createCanvas();
         this.createPiano();
         this.animate();
+    }
+
+
+    ngOnDestroy() {
+        console.log('bye bye')
+        document.removeEventListener("keydown", (event) => this.onKeyPress(event, "pressed"));
+        document.removeEventListener("keyup", (event) => this.onKeyPress(event, "released"));
     }
 
 
@@ -145,6 +159,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
 
         const width = canvas.clientWidth;
         const height = canvas.clientHeight;
+
         if (canvas.width !== width || canvas.height !== height) {
             this.pianoRenderer.setSize(width, height, false);
             this.camera.aspect = width / height;
@@ -163,11 +178,10 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
 
 
     onKeyPress = (event: KeyboardEvent, action: string) => {
-        if (event.repeat) {
+        if (event.repeat || this.currentRoute !== '/') {
             return;
         }
 
-        console.log('key')
         const key: string = event.key;
         const keyConversion: { [key: string]: string } = {
             'z': 'A.000Action',
@@ -297,7 +311,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
         });
     }
 
-     animate = () => {
+    animate = () => {
         this.resizeCanvasToDisplaySize();
 
         const delta = this.clock.getDelta();
@@ -305,9 +319,14 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
         if (this.lidMixer) {
             this.lidMixer.update(delta);
         }
+
         this.render();
 
-        requestAnimationFrame(this.animate);
+
+        if (this.currentRoute === '/') {
+            requestAnimationFrame(this.animate);
+
+        }
     }
 
 
@@ -330,10 +349,16 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
 
 
     keyAction(animationName: string, timeScale: number) {
-        console.log(animationName)
-        const noteName = this.parseToNote(animationName);
         const clipNum = this.clipNames.indexOf(animationName);
         const action = this.mixer.clipAction(this.clips[clipNum]);
+        const noteName = this.parseToNote(animationName);
+
+        if (timeScale > 0) {
+            this.sampler.triggerAttack(noteName);
+        }
+        else {
+            this.sampler.triggerRelease(noteName);
+        }
 
         action.setLoop(THREE.LoopOnce, 1);
         action.paused = false;
@@ -344,32 +369,11 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
     }
 
 
-
-     menuKeyManager(key: [number, boolean]) { // only called from service in menu
-        const keyIndex = key[0];
-        const timeScale = 1.2 * (Number(key[1]) * 2 - 1); // turns boolean to 1(down) 0(up) to the appropriate time scale
-
-        const intersectedKey = this.menuKeys[keyIndex];
-        this.keyAction(intersectedKey, timeScale);
-    }
-
-
-    keyboardManager(intersectedKey: string, intersectedAction: number, interaction: string = 'mouse') { // action: 0 = up, 1 = down
-        console.log(intersectedKey);
-        const timeScale = 1.2 * (intersectedAction * 2) - 1;
-        const noteName = this.parseToNote(intersectedKey);
-
-        if (timeScale > 0) {
-            this.sampler.triggerAttack(noteName);
-        }
-        else {
-            this.sampler.triggerRelease(noteName);
-        }
-
+    keyboardManager(intersectedKey: string, intersectedAction: number, interactionType: string = 'mouse') { // action: 0 = up, 1 = down
+        const timeScale = 1.25 * ((intersectedAction * 2) - 1);
         this.keyAction(intersectedKey, timeScale);
 
-
-        if (this.menuKeys.includes(intersectedKey) && interaction === 'mouse') {
+        if (this.menuKeys.includes(intersectedKey) && interactionType === 'mouse') {
             const key = this.menuKeys.indexOf(intersectedKey);
             const down = intersectedAction !== 0;
             this.pianoService.sendMenuEvent(key, down);
@@ -377,7 +381,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
     }
 
 
-    intersectionCheck() {
+    intersectionCheck() { // expirement with rxjs throttling to stop really fast trills!
         let intersectedName: string;
 
         this.raycaster.setFromCamera(this.pointer, this.camera);
@@ -402,6 +406,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
         } 
 
         intersectedName += "Action";
+        console.log(intersectedName)
 
         if (this.intersectedArray.length < 2) {
             this.intersectedArray.push(intersectedName);
@@ -441,5 +446,3 @@ export class KeyboardComponent implements OnInit, AfterViewInit {
         return animationName
     }
 }
-
-

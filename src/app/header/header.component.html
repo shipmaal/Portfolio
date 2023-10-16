@@ -10,8 +10,8 @@
         </h1>
     </div>
     <div *ngIf="displayMenu" class="menu">
-        <div class="menu-item" *ngFor="let item of menuItems; let i = index">
-            <div 
+        <div [ngClass]="menuClass[i]" *ngFor="let item of menuItems; let i = index">
+            <div
                 (mouseenter)="onMouseEnter(i)"
                 (mouseleave)="onMouseLeave(i)"
                 (click)="onClick(i)">

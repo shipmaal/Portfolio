@@ -20,7 +20,7 @@ export class HeaderComponent implements AfterViewInit {
     currentRoute!: string;
     displayMenu = false;
     canvasStyle = { 'cursor': 'default', 'opacity': '100' };
-    menuStyle = {};
+    menuClass = Array(5).fill(["menu-item", ""]);
 
 
     menuItems = [
@@ -38,6 +38,12 @@ export class HeaderComponent implements AfterViewInit {
             .pipe(filter(event => event instanceof NavigationEnd))
             .subscribe(() => {
                 this.currentRoute = this.router.url;
+                this.menuClass = this.menuItems.map(item => [
+                    "menu-item",
+                    item.link === this.currentRoute ? "underline" : ""
+                ]);
+
+
                 if (this.currentRoute != '/') {
                     this.displayMenu = true;
                     const animationIndex = this.headerClass.indexOf("animation");
@@ -84,7 +90,6 @@ export class HeaderComponent implements AfterViewInit {
         //} else {
         //    this.titleMargin = "2vh 0 0 0";
         //}
-
     }
 
     onMouseEnter(index: number) {
