@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 
 import { PianoService } from './../../piano.service';
-import { Subscription, filter } from 'rxjs';
+import { Subscription, fromEvent, filter, merge, groupBy, map, distinctUntilChanged, mergeAll, bufferCount, Observable } from 'rxjs';
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
@@ -13,7 +13,6 @@ import * as Tone from 'Tone';
 
 import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../main';
-
 
 
 @Component({
@@ -63,6 +62,19 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         baseUrl: "https://tonejs.github.io/audio/salamander/",
     }).toDestination();
 
+    keyPresses: Observable<unknown>;
+    intersectionBuffer: Observable<[string, number][]> = new Observable<[string, number]>().pipe(
+        bufferCount(5),
+        filter(buffer => {
+            if (buffer.length === 0) {
+                return false;
+            }
+
+            const firstValue = buffer[0];
+            return buffer.every(value => value === firstValue);
+        })
+    );
+
 
     constructor(private pianoService: PianoService, private router: Router) {
 
@@ -73,7 +85,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
             .subscribe(() => {
                 this.currentRoute = this.router.url;
             });
-            
+
 
         this.pianoService.getLoadEvent().subscribe(() => {
             this.lidup();
@@ -90,16 +102,32 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.manager.onLoad = function () {
             pianoService.sendLoadEvent();
         }
+
+        this.intersectionBuffer.subscribe((buffer) => {
+            console.log(buffer)
+        });
+
+        const keyDowns = fromEvent<KeyboardEvent>(document, 'keydown');
+        const keyUps = fromEvent<KeyboardEvent>(document, 'keyup');
+
+        this.keyPresses = merge(keyDowns, keyUps).pipe(
+            groupBy((event: any) => event.keyCode),
+            map((group: any) => group.pipe(
+                distinctUntilChanged((prev: any, curr: any) => prev.type === curr.type)
+            )),
+            mergeAll()
+        );
+
+        this.keyPresses.subscribe((event: any) => {
+            this.onKeyPress(event, event.type);
+        });
     }
 
     ngOnInit(): void {
         window.addEventListener('pointermove', this.onPointerMove);
-
-        document.addEventListener("keydown", (event) => this.onKeyPress(event, "pressed"));
-        document.addEventListener("keyup", (event) => this.onKeyPress(event, "released"));
     }
 
-    
+
     ngAfterViewInit() {
         this.createCanvas();
         this.createPiano();
@@ -108,9 +136,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
     ngOnDestroy() {
-        console.log('bye bye')
-        document.removeEventListener("keydown", (event) => this.onKeyPress(event, "pressed"));
-        document.removeEventListener("keyup", (event) => this.onKeyPress(event, "released"));
+    
     }
 
 
@@ -128,15 +154,15 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
             xhr.send();
 
             return url
-            
+
         } catch (error) {
             console.error(error);
-            return('none')
+            return ('none')
         }
     }
 
-    
-     createCanvas = () => {
+
+    createCanvas = () => {
         let canvas = document.querySelector("canvas");
 
         if (!canvas) {
@@ -154,7 +180,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
 
-     resizeCanvasToDisplaySize() {
+    resizeCanvasToDisplaySize() {
         const canvas = this.pianoRenderer.domElement;
 
         const width = canvas.clientWidth;
@@ -214,17 +240,18 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
             '/': 'C.000Action',
         }
 
-        action = action.replace('pressed', '1');
-        action = action.replace('released', '0');
+
+        action = action.replace('keydown', '1');
+        action = action.replace('keyup', '0');
         this.keyboardManager(keyConversion[key], Number(action), 'key');
     }
-    
+
 
     async createPiano(): Promise<void> {
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.25, 1000);
         this.scene.add(this.camera);
- 
+
         try {
             await this.loadEXRBackground();
             await this.loadBaseGLB();
@@ -257,26 +284,26 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
         return new Promise<void>((resolve, reject) => {
             new GLTFLoader().load(baseUrl, (gltf) => {
-                    const object = gltf.scene;
-                    const base = object.children[2];
+                const object = gltf.scene;
+                const base = object.children[2];
 
-                    object.traverse((subObject) => {
-                        if (subObject instanceof THREE.Mesh) {
-                            subObject.material.envMapIntensity = 0;
-                        }
-                    });
+                object.traverse((subObject) => {
+                    if (subObject instanceof THREE.Mesh) {
+                        subObject.material.envMapIntensity = 0;
+                    }
+                });
 
-                    this.lidClip = gltf.animations[1];
-                    this.lidMixer = new THREE.AnimationMixer(object);
+                this.lidClip = gltf.animations[1];
+                this.lidMixer = new THREE.AnimationMixer(object);
 
-                    this.camera.position.x = base.position.x;
-                    this.camera.position.y = base.position.y + 184;
-                    this.camera.position.z = base.position.z + 150;
-                    this.camera.lookAt(new THREE.Vector3(156, 0, -74));
+                this.camera.position.x = base.position.x;
+                this.camera.position.y = base.position.y + 184;
+                this.camera.position.z = base.position.z + 150;
+                this.camera.lookAt(new THREE.Vector3(156, 0, -74));
 
-                    this.scene.add(object);
-                    resolve();
-                }, undefined, reject);
+                this.scene.add(object);
+                resolve();
+            }, undefined, reject);
         });
     }
 
@@ -287,26 +314,26 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
         return new Promise<void>((resolve, reject) => {
             new GLTFLoader(this.manager).load(keyboardUrl, (gltf) => {
-                    this.clips = gltf.animations;
-                    this.clips.forEach((clip) => {
-                        this.clipNames.push(clip.name);
-                    });
+                this.clips = gltf.animations;
+                this.clips.forEach((clip) => {
+                    this.clipNames.push(clip.name);
+                });
 
-                    const object = gltf.scene;
-                    object.children.forEach((key) => {
-                        if (key.name.includes('#')) {
-                            key.traverse((mesh) => {
-                                if (mesh instanceof THREE.Mesh && !(mesh.name.includes('_1'))) {
-                                    mesh.material.envMapIntensity = 0.25;
-                                }
-                            });
-                        }
-                    });
+                const object = gltf.scene;
+                object.children.forEach((key) => {
+                    if (key.name.includes('#')) {
+                        key.traverse((mesh) => {
+                            if (mesh instanceof THREE.Mesh && !(mesh.name.includes('_1'))) {
+                                mesh.material.envMapIntensity = 0.25;
+                            }
+                        });
+                    }
+                });
 
-                    this.mixer = new THREE.AnimationMixer(object);
-                    this.scene.add(object);
-                    this.sceneLoaded = true;
-                    resolve();
+                this.mixer = new THREE.AnimationMixer(object);
+                this.scene.add(object);
+                this.sceneLoaded = true;
+                resolve();
             }, undefined, reject);
         });
     }
@@ -377,7 +404,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
             const key = this.menuKeys.indexOf(intersectedKey);
             const down = intersectedAction !== 0;
             this.pianoService.sendMenuEvent(key, down);
-        } 
+        }
     }
 
 
@@ -403,10 +430,9 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
             intersectedName = intersectedName.slice(0, 2) + "." + intersectedName.slice(2);
         } else if (intersectedName.includes('0')) {
             intersectedName = intersectedName.slice(0, 1) + "." + intersectedName.slice(1);
-        } 
+        }
 
         intersectedName += "Action";
-        console.log(intersectedName)
 
         if (this.intersectedArray.length < 2) {
             this.intersectedArray.push(intersectedName);
@@ -422,6 +448,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
                 if (clipNum !== -1) {
                     this.keyboardManager(intersectedKey, intersectedAction);
+                    console.log(intersectedKey, intersectedAction);
                 }
             });
         }
