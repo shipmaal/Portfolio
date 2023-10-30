@@ -3,16 +3,13 @@ import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 
 import { PianoService } from './../../piano.service';
-import { Subscription, fromEvent, filter, merge, groupBy, map, distinctUntilChanged, mergeAll, bufferCount, Observable } from 'rxjs';
+import { Subscription, fromEvent, filter, merge, groupBy, map, distinctUntilChanged, mergeAll, Observable, Subject, throttleTime, debounceTime, bufferCount } from 'rxjs';
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 
 import * as Tone from 'Tone';
-
-import { ref, getDownloadURL } from 'firebase/storage';
-import { storage } from '../../../main';
 
 
 @Component({
@@ -62,22 +59,18 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         baseUrl: "https://tonejs.github.io/audio/salamander/",
     }).toDestination();
 
-    keyPresses: Observable<unknown>;
-    intersectionBuffer: Observable<[string, number][]> = new Observable<[string, number]>().pipe(
-        bufferCount(5),
-        filter(buffer => {
-            if (buffer.length === 0) {
-                return false;
-            }
+    upSubject$ = new Subject<[string, number]>();
+    downSubject$ = new Subject<[string, number]>();
 
-            const firstValue = buffer[0];
-            return buffer.every(value => value === firstValue);
-        })
-    );
+    pianoPresses$: Observable<unknown>;
+    pianoActions$ = merge(
+        this.upSubject$.asObservable(),
+        this.downSubject$.asObservable()
+    ).pipe();
 
+    pianoBuffer$ = this.pianoActions$.pipe(bufferCount(10)); // check time between key presses?
 
     constructor(private pianoService: PianoService, private router: Router) {
-
         this.currentRoute = this.router.url;
 
         this.router.events
@@ -103,14 +96,18 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
             pianoService.sendLoadEvent();
         }
 
-        this.intersectionBuffer.subscribe((buffer) => {
-            console.log(buffer)
+        this.pianoActions$.subscribe((action) => {
+            this.keyboardManager(action[0], action[1]);
+        });
+
+        this.pianoBuffer$.subscribe((actions) => {
+            console.log(actions)
         });
 
         const keyDowns = fromEvent<KeyboardEvent>(document, 'keydown');
         const keyUps = fromEvent<KeyboardEvent>(document, 'keyup');
 
-        this.keyPresses = merge(keyDowns, keyUps).pipe(
+        this.pianoPresses$ = merge(keyDowns, keyUps).pipe(
             groupBy((event: any) => event.keyCode),
             map((group: any) => group.pipe(
                 distinctUntilChanged((prev: any, curr: any) => prev.type === curr.type)
@@ -118,10 +115,11 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
             mergeAll()
         );
 
-        this.keyPresses.subscribe((event: any) => {
+        this.pianoPresses$.subscribe((event: any) => {
             this.onKeyPress(event, event.type);
         });
     }
+
 
     ngOnInit(): void {
         window.addEventListener('pointermove', this.onPointerMove);
@@ -136,29 +134,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
     ngOnDestroy() {
-    
-    }
-
-
-    async downloadFile(filePath: string): Promise<string> {
-        try {
-            console.log('downloading')
-            const url = await getDownloadURL(ref(storage, filePath));
-
-            const xhr = new XMLHttpRequest();
-            xhr.responseType = 'blob';
-            xhr.onload = (event) => {
-                const blob = xhr.response;
-            };
-            xhr.open('GET', url.toString());
-            xhr.send();
-
-            return url
-
-        } catch (error) {
-            console.error(error);
-            return ('none')
-        }
+       
     }
 
 
@@ -278,6 +254,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
+    
     async loadBaseGLB() {
         //const baseUrl = await this.downloadFile('assets/Base.glb');
         const baseUrl = 'assets/Base.glb';
@@ -337,6 +314,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
             }, undefined, reject);
         });
     }
+
 
     animate = () => {
         this.resizeCanvasToDisplaySize();
@@ -408,12 +386,11 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
 
-    intersectionCheck() { // expirement with rxjs throttling to stop really fast trills!
-        let intersectedName: string;
-
+    intersectionCheck() { // expirement with rxjs throttling to stop really fast trills! //// throttling does not work:( need to do something more clever booooo
         this.raycaster.setFromCamera(this.pointer, this.camera);
-
         const intersected = this.raycaster.intersectObjects(this.scene.children)[0];
+
+        let intersectedName: string;
 
         try {
             if (intersected.object.name.includes('Key')) {
@@ -424,7 +401,6 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         } catch {
             intersectedName = "Scene";
         }
-
 
         if (intersectedName.includes('#0')) {
             intersectedName = intersectedName.slice(0, 2) + "." + intersectedName.slice(2);
@@ -447,12 +423,12 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
                 const intersectedAction = this.intersectedArray.indexOf(intersectedKey);
 
                 if (clipNum !== -1) {
-                    this.keyboardManager(intersectedKey, intersectedAction);
-                    console.log(intersectedKey, intersectedAction);
+                    (intersectedAction ? this.downSubject$ : this.upSubject$).next([intersectedKey, intersectedAction]);
                 }
             });
         }
     }
+
 
     parseToNote(animationName: string): string {
         if (animationName === 'C.000Action') {
