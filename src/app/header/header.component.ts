@@ -87,10 +87,8 @@ export class HeaderComponent implements AfterViewInit, AfterViewChecked {
         const headerContainer = document.getElementById("container");
         if (headerContainer) {
             const headerContainerWidth = headerContainer.getBoundingClientRect().width;
-            if (headerContainerWidth !== this.prevHeaderWidth) {
-                this.prevHeaderWidth = headerContainerWidth;
-                this.elementService.sendHeaderInfo(headerContainerWidth);
-            }
+            this.elementService.sendHeaderInfo(headerContainerWidth);
+
         }
     }
     

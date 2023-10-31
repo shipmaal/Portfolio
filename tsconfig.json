@@ -24,7 +24,8 @@
         "dom"
     ],
     "paths": {
-        "@services/*": ["src/services/*"]
+        "@services/*": [ "src/services/*" ],
+        "@templates/*": [ "src/templates/*" ]
     }
   },
   "angularCompilerOptions": {

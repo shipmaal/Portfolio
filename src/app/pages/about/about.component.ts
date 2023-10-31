@@ -4,33 +4,18 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from 'src/main';
 
-import { ElementService } from '@services/element.service';
-
-
+import { ContentContainerComponent } from '@templates/content-container/content-container.component';
 
 @Component({
     selector: 'app-about',
     standalone: true,
-    imports: [CommonModule, NgOptimizedImage],
+    imports: [CommonModule, NgOptimizedImage, ContentContainerComponent],
     templateUrl: './about.component.html',
     styleUrls: ['./about.component.scss']
 })
 export class AboutComponent implements OnInit {
     portraitImageSrc!: string;
-    headerWidth: number | undefined;
-    containerStyle!: { [key: string]: string };
 
-    constructor(private elementService: ElementService) {
-        this.elementService.getHeaderInfo().subscribe((width: number) => {
-            this.headerWidth = width;
-            console.log(this.headerWidth);
-            this.containerStyle = {
-                'width': `${this.headerWidth}px`, 
-            }
-        });
-    }
-
-        
     ngOnInit() {
         this.downloadImage('images/Alan-0001.jpeg');
     }
@@ -47,16 +32,13 @@ export class AboutComponent implements OnInit {
             xhr.open('GET', url.toString());
             xhr.send();
 
-           
             try {
                 this.portraitImageSrc = url;
             }
             catch { }
-            
         } catch (error) {
             // Handle any errors
             console.error(error);
-      
         }
     }
 }

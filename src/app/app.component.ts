@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 
 import { NgSwitch, NgSwitchDefault, NgSwitchCase } from '@angular/common';
+import { HeaderComponent } from './header/header.component'
 import { FooterComponent } from './footer/footer.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { RouterModule } from '@angular/router';
-import { HeaderComponent } from './header/header.component'
 
 
 @Component({

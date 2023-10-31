@@ -4,7 +4,6 @@
     width: fit-content;
     background: black;
     transform: rotateX(90deg);
-    
 }
 
 .container {
@@ -16,7 +15,7 @@
 .menu {
     display: flex;
     justify-content: center;
-    gap: 24px;
+    gap: 48px;
 }
 
 .menu-item {
@@ -51,7 +50,7 @@
     left: 0;
     bottom: -4.2px;
     width: 100%;
-    height: 4px; /* Adjust the height as needed */
+    height: 4px;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'><line x1='4%' y1='1' x2='96%' y2='1' style='stroke: cornsilk; stroke-width: 2.4; stroke-linecap: round'/></svg>");
     background-repeat: repeat-x;
 }

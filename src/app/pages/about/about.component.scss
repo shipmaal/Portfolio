@@ -16,7 +16,10 @@
 }
 
 .paragraph-div {
-    width: 50%;
+    width: 48%;
+    text-align: justify;
+    word-break: break-word;
+    line-height: 1.5;
 }
 
 
@@ -26,4 +29,9 @@
         stroke-width: 4;
         stroke-linecap: round;
     }
+}
+
+.image {
+    width: 48%;
+    margin: 16px 0;
 }
