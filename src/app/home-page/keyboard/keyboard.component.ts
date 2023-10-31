@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 
-import { PianoService } from './../../piano.service';
+import { PianoService } from '@services/piano.service';
 import { Subscription, fromEvent, filter, merge, groupBy, map, distinctUntilChanged, mergeAll, Observable, Subject, throttleTime, debounceTime, bufferCount } from 'rxjs';
 
 import * as THREE from 'three';

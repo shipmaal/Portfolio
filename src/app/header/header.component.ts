@@ -1,8 +1,9 @@
-import { Component, AfterViewInit, OnInit } from '@angular/core';
+import { Component, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 
-import { PianoService } from './../piano.service'
+import { PianoService } from '@services/piano.service'
+import { ElementService } from '@services/element.service'
 import { Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators';
 
@@ -13,7 +14,7 @@ import { filter } from 'rxjs/operators';
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements AfterViewInit {
+export class HeaderComponent implements AfterViewInit, AfterViewChecked {
     loadEventSub!: Subscription;
     headerClass: string[] = ["header"];
     titleMargin = "2vh 0 0 0"
@@ -21,6 +22,7 @@ export class HeaderComponent implements AfterViewInit {
     displayMenu = false;
     canvasStyle = { 'cursor': 'default', 'opacity': '100' };
     menuClass = Array(5).fill(["menu-item", ""]);
+    prevHeaderWidth: number = 0;
 
 
     menuItems = [
@@ -31,7 +33,7 @@ export class HeaderComponent implements AfterViewInit {
         { label: "Contact Me", link: "/contact" }
     ];
 
-    constructor(private lidService: PianoService, private router: Router) {
+    constructor(private lidService: PianoService, private elementService: ElementService, private router: Router) {
         this.currentRoute = this.router.url;
 
         this.router.events
@@ -46,6 +48,7 @@ export class HeaderComponent implements AfterViewInit {
 
                 if (this.currentRoute != '/') {
                     this.displayMenu = true;
+                    
                     const animationIndex = this.headerClass.indexOf("animation");
                     if ((animationIndex) > -1) {
                         this.headerClass[animationIndex] = "rotate";
@@ -65,21 +68,30 @@ export class HeaderComponent implements AfterViewInit {
 
             });
 
+
     }
 
-    
 
     ngAfterViewInit() {
-       
-        
         this.loadEventSub = this.lidService.getLoadEvent().subscribe(() => {
             this.headerClass.push("rotate");
         })
 
-
         window.addEventListener('scroll', this.scrollFunction);
 
+        
+        //this.elementService.sendHeaderInfo(headerContainerWidth!);
+    }
 
+    ngAfterViewChecked() {
+        const headerContainer = document.getElementById("container");
+        if (headerContainer) {
+            const headerContainerWidth = headerContainer.getBoundingClientRect().width;
+            if (headerContainerWidth !== this.prevHeaderWidth) {
+                this.prevHeaderWidth = headerContainerWidth;
+                this.elementService.sendHeaderInfo(headerContainerWidth);
+            }
+        }
     }
     
 
@@ -112,5 +124,5 @@ export class HeaderComponent implements AfterViewInit {
         const page = this.menuItems[index].link
         this.router.navigate([page])
     }
-
 }
+

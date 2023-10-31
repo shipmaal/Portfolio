@@ -1,6 +1,6 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PianoService } from './../../piano.service'
+import { PianoService } from '@services/piano.service'
 import { Subscription } from 'rxjs'
 
 @Component({

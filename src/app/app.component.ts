@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
-import { bootstrapApplication } from '@angular/platform-browser';
 
 import { NgSwitch, NgSwitchDefault, NgSwitchCase } from '@angular/common';
 import { FooterComponent } from './footer/footer.component';
 import { HomePageComponent } from './home-page/home-page.component';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from './header/header.component'
 

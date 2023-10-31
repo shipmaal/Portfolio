@@ -1,0 +1,29 @@
+.about-page {
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-self: center;
+}
+
+.subcontainer {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+}
+
+.paragraph-div {
+    width: 50%;
+}
+
+
+#chart {
+    line {
+        stroke: cornsilk;
+        stroke-width: 4;
+        stroke-linecap: round;
+    }
+}

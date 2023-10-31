@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 import { ref, getDownloadURL } from 'firebase/storage';
-import { storage } from '../../../main';
+import { storage } from 'src/main';
+
+import { ElementService } from '@services/element.service';
+
 
 
 @Component({
@@ -13,12 +16,23 @@ import { storage } from '../../../main';
     styleUrls: ['./about.component.scss']
 })
 export class AboutComponent implements OnInit {
-    constructor() { }
     portraitImageSrc!: string;
+    headerWidth: number | undefined;
+    containerStyle!: { [key: string]: string };
+
+    constructor(private elementService: ElementService) {
+        this.elementService.getHeaderInfo().subscribe((width: number) => {
+            this.headerWidth = width;
+            console.log(this.headerWidth);
+            this.containerStyle = {
+                'width': `${this.headerWidth}px`, 
+            }
+        });
+    }
 
         
     ngOnInit() {
-         this.downloadImage('images/Alan-0001.jpeg');
+        this.downloadImage('images/Alan-0001.jpeg');
     }
 
     async downloadImage(imagePath: string) {

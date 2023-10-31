@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { KeyboardComponent } from './keyboard/keyboard.component';
 import { TitleComponent } from './title/title.component';
 import { MenuComponent } from './menu/menu.component';
-import { PianoService } from '../piano.service';
+import { PianoService } from '@services/piano.service';
 import { Subscription } from 'rxjs';
 
 @Component({

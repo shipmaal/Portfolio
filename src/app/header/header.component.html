@@ -1,5 +1,5 @@
-<div class="container" [ngStyle]="canvasStyle" >
-    <div #container [ngClass]="headerClass">
+<div id="container" class="container" [ngStyle]="canvasStyle" >
+    <div [ngClass]="headerClass">
         <h1
             class="title"
             [style.margin]="titleMargin"
@@ -9,7 +9,7 @@
             Alan's Portfolio
         </h1>
     </div>
-    <div *ngIf="displayMenu" class="menu">
+    <div *ngIf="displayMenu" id="menu" class="menu">
         <div [ngClass]="menuClass[i]" *ngFor="let item of menuItems; let i = index">
             <div
                 (mouseenter)="onMouseEnter(i)"
