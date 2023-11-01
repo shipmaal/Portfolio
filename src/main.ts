@@ -8,6 +8,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage } from "firebase/storage"
 import { getPerformance } from "firebase/performance";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 
 
