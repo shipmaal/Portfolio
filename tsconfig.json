@@ -25,7 +25,11 @@
     ],
     "paths": {
         "@services/*": [ "src/services/*" ],
-        "@templates/*": [ "src/templates/*" ]
+        "@templates/*": [ "src/templates/*" ],
+        //"crypto": [ "./node_modules/crypto-browserify" ],
+        //"os": [ "./node_modules/os-browserify" ],
+        //"path": [ "./node_modules/path-browserify" ],
+        //"stream": [ "./node_modules/stream-browserify" ]
     }
   },
   "angularCompilerOptions": {
