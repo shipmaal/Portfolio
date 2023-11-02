@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ppSVG, paypalSVG } from './paypal.svgdata'
 
 @Component({
     selector: 'paypal-button',
@@ -7,5 +8,7 @@ import { Component } from '@angular/core';
     styleUrls: ['./paypal.component.scss']
 })
 export class PaypalComponent {
+    ppSVG = ppSVG;
+    paypalSVG = paypalSVG;
 
 }

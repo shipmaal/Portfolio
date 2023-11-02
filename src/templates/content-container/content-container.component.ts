@@ -11,14 +11,12 @@ import { ElementService } from '@services/element.service';
     styleUrls: ['./content-container.component.scss']
 })
 export class ContentContainerComponent {
-    headerWidth: number | undefined;
     subContainerStyle!: { [key: string]: string };
 
     constructor(private elementService: ElementService) {
         this.elementService.getHeaderInfo().subscribe((width: number) => {
-            this.headerWidth = width;
             this.subContainerStyle = {
-                'width': `${this.headerWidth}px`,
+                'width': `${width}px`,
             }
         });
     }

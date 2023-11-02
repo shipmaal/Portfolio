@@ -45,7 +45,6 @@ export class HeaderComponent implements AfterViewInit, AfterViewChecked {
                     item.link === this.currentRoute ? "underline" : ""
                 ]);
 
-
                 if (this.currentRoute != '/') {
                     this.displayMenu = true;
                     
@@ -65,10 +64,7 @@ export class HeaderComponent implements AfterViewInit, AfterViewChecked {
 
                     }, 500);
                 }
-
             });
-
-
     }
 
 
