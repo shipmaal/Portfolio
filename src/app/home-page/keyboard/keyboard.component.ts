@@ -9,7 +9,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
 
-import * as Tone from 'Tone';
+import * as Tone from 'tone';
 
 
 @Component({
