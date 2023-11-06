@@ -8,7 +8,7 @@
                class="menu-item"
                id={{item.id}}
                (click)="onSiderClick(item)">
-                {{item.id}}
+                {{item.name}}
             </p>
         </div>
     </div>
@@ -16,7 +16,9 @@
         <div *ngFor="let item of menuItems"
              class="project"
              id={{item.contentId}}>
-            {{item.contentId}}
+            <p class="project-header">
+                {{item.name}}
+            </p>
         </div>
     </div>
 </div>

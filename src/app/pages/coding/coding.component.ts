@@ -6,6 +6,7 @@ import { ElementService } from '@services/element.service';
 
 
 interface MenuItem {
+    name: string;
     id: string;
     contentId: string;
 }
@@ -30,11 +31,28 @@ export class CodingComponent {
         "Music Analysis",
         "Map Maker",
     ].map(item => {
-        return { id: item, contentId: `${item.replace(' ', '-').toLowerCase()}-content` }
+        return {
+            name: item,
+            id: `${item.replace(' ', '-').toLowerCase()}`,
+            contentId: `${item.replace(' ', '-').toLowerCase()}-content`
+        }
     });
+
+
+    formatMenuItem(item: MenuItem) {
+        const sidebar = document.getElementById(item.id);
+        const menuItems = document.querySelectorAll(".menu-item");
+        if (menuItems) {
+            menuItems.forEach((menuItem) => {
+                menuItem.classList.remove('underline');
+            });
+        }
+
+        sidebar?.classList.add('underline');
+    }
+
   
     constructor(private elementService: ElementService) {
-        console.log(this.menuItems)
         this.elementService.getHeaderInfo().subscribe((width: number) => {
             this.contentWidth = width;
             this.siderWidth = (screen.availWidth - width) / 2;
@@ -48,23 +66,33 @@ export class CodingComponent {
             }
         });
 
-        window.addEventListener('scroll', this.scrollFunction);
+        window.addEventListener('scroll', () => this.scrollFunction(this.menuItems));
     }
 
 
     onSiderClick(item: MenuItem) {
-        const element = document.getElementById(item.contentId)!;
-        element.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+        const content = document.getElementById(item.contentId)!;
+        content.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+        //this.formatMenuItem(item);
     }
-
     
-    scrollFunction() {
+
+    scrollFunction(menuItems: MenuItem[]) {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         const sidebar = document.getElementById('sider');
         const sideContainer = document.getElementById('sider-container');
-        if (sidebar && sideContainer) {
 
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            console.log(scrollTop)
+        for (let i = 0; i < menuItems.length; i++) {
+            const content = document.getElementById(menuItems[i].contentId)!;
+            const contentTop = content.offsetTop - 32;
+            const contentBottom = contentTop + content.offsetHeight;
+
+            if (scrollTop >= contentTop && scrollTop < contentBottom) {
+                this.formatMenuItem(menuItems[i]);
+            }
+        }
+
+        if (sidebar && sideContainer) {
             const sidebarTop = sideContainer.offsetTop;
             if (scrollTop > sidebarTop) {
                 sidebar.classList.add('fixed');
@@ -73,6 +101,4 @@ export class CodingComponent {
             }
         }
     }
-
-
 }
