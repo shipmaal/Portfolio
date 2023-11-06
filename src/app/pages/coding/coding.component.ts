@@ -1,28 +1,29 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ContentContainerComponent } from '@templates/content-container/content-container.component';
 import { ElementService } from '@services/element.service';
+import { ContentComponent } from './content/content.component';
 
 
 interface MenuItem {
     name: string;
     id: string;
     contentId: string;
+    component: string;
 }
 
+
 @Component({
-  selector: 'app-coding',
+    selector: 'app-coding',
     standalone: true,
-    imports: [CommonModule, ContentContainerComponent],
-  templateUrl: './coding.component.html',
-  styleUrls: ['./coding.component.scss']
+    imports: [CommonModule, ContentComponent],
+    templateUrl: './coding.component.html',
+    styleUrls: ['./coding.component.scss']
 })
 export class CodingComponent {
     contentContainerStyle!: { [key: string]: string };
     siderContainerStyle!: { [key: string]: string };
     siderStyle!: { [key: string]: string };
-    contentWidth!: number;
     siderWidth!: number;
 
     menuItems: MenuItem[] = [
@@ -34,7 +35,8 @@ export class CodingComponent {
         return {
             name: item,
             id: `${item.replace(' ', '-').toLowerCase()}`,
-            contentId: `${item.replace(' ', '-').toLowerCase()}-content`
+            contentId: `${item.replace(' ', '-').toLowerCase()}-content`,
+            component: `${item.replace(' ', '')}Component`
         }
     });
 
@@ -54,7 +56,6 @@ export class CodingComponent {
   
     constructor(private elementService: ElementService) {
         this.elementService.getHeaderInfo().subscribe((width: number) => {
-            this.contentWidth = width;
             this.siderWidth = (screen.availWidth - width) / 2;
 
             this.contentContainerStyle = {
@@ -73,7 +74,6 @@ export class CodingComponent {
     onSiderClick(item: MenuItem) {
         const content = document.getElementById(item.contentId)!;
         content.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
-        //this.formatMenuItem(item);
     }
     
 
@@ -101,4 +101,7 @@ export class CodingComponent {
             }
         }
     }
+
+   
+
 }
