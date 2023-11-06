@@ -12,7 +12,8 @@
             </p>
         </div>
     </div>
-    <div [ngStyle]="contentContainerStyle">
+    <div id="content-container"
+         [ngStyle]="contentContainerStyle">
         <div *ngFor="let item of menuItems"
              class="project"
              id={{item.contentId}}>
