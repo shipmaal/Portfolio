@@ -1,8 +1,8 @@
 import { Component, Input, OnInit, ViewContainerRef } from '@angular/core';
-import { PortfolioComponent } from '../portfolio/portfolio.component';
-import { CrochetRendererComponent } from '../crochet-renderer/crochet-renderer.component';
-import { MapMakerComponent } from '../map-maker/map-maker.component'
-import { MusicAnalysisComponent } from '../music-analysis/music-analysis.component';
+import { PortfolioComponent } from '@coding/portfolio/portfolio.component';
+import { CrochetRendererComponent } from '@coding/crochet-renderer/crochet-renderer.component';
+import { MapMakerComponent } from '@coding/map-maker/map-maker.component'
+import { MusicAnalysisComponent } from '@coding/music-analysis/music-analysis.component';
 
 
 const componentsMap = {

@@ -26,7 +26,8 @@
     "paths": {
         "@services/*": [ "src/services/*" ],
         "@templates/*": [ "src/templates/*" ],
-        "@ui/*": [ "src/ui/*" ]
+        "@ui/*": [ "src/ui/*" ],
+        "@coding/*": [ "src/app/pages/coding/*" ]
     }
   },
   "angularCompilerOptions": {
