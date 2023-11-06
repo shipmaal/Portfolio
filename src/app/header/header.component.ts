@@ -24,7 +24,6 @@ export class HeaderComponent implements AfterViewInit, AfterViewChecked {
     menuClass = Array(5).fill(["menu-item", ""]);
     prevHeaderWidth: number = 0;
 
-
     menuItems = [
         { label: "About Me", link: "/about" },
         { label: "Education", link: "/education" },
@@ -39,6 +38,8 @@ export class HeaderComponent implements AfterViewInit, AfterViewChecked {
         this.router.events
             .pipe(filter(event => event instanceof NavigationEnd))
             .subscribe(() => {
+                this.broadcastHeaderWidth();
+
                 this.currentRoute = this.router.url;
                 this.menuClass = this.menuItems.map(item => [
                     "menu-item",
@@ -61,7 +62,6 @@ export class HeaderComponent implements AfterViewInit, AfterViewChecked {
                     setTimeout(() => {
                         this.canvasStyle['opacity'] = '100';
                         this.headerClass.push("animation");
-
                     }, 500);
                 }
             });
@@ -74,17 +74,19 @@ export class HeaderComponent implements AfterViewInit, AfterViewChecked {
         })
 
         window.addEventListener('scroll', this.scrollFunction);
-
-        
-        //this.elementService.sendHeaderInfo(headerContainerWidth!);
     }
 
+
     ngAfterViewChecked() {
+        this.broadcastHeaderWidth();
+    }
+
+
+    broadcastHeaderWidth() {
         const headerContainer = document.getElementById("container");
         if (headerContainer) {
             const headerContainerWidth = headerContainer.getBoundingClientRect().width;
             this.elementService.sendHeaderInfo(headerContainerWidth);
-
         }
     }
     
@@ -97,6 +99,7 @@ export class HeaderComponent implements AfterViewInit, AfterViewChecked {
         //    this.titleMargin = "2vh 0 0 0";
         //}
     }
+
 
     onMouseEnter(index: number) {
         if (this.displayMenu) {
@@ -118,5 +121,5 @@ export class HeaderComponent implements AfterViewInit, AfterViewChecked {
         const page = this.menuItems[index].link
         this.router.navigate([page])
     }
-}
 
+}

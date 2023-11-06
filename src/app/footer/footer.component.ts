@@ -20,8 +20,4 @@ export class FooterComponent {
         { label: "Contact Me", link: "/contact" }
     ];
 
-    socials = [
-        { label: "LinkedIn", link: "https://www.facebook.com/alexander.lee.520900" },
-    ]
-
 }

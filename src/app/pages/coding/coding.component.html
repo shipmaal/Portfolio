@@ -1,1 +1,21 @@
-<content-container><p>More coming soon</p></content-container>
+<div class="container">
+    <div [ngStyle]="siderContainerStyle">
+        <div class="sider"
+             id="sider"
+             [ngStyle]="siderStyle">
+            <p *ngFor="let item of menuItems"
+               class="menu-item"
+               id={{item.id}}
+               (click)="onSiderClick(item)">
+                {{item.id}}
+            </p>
+        </div>
+    </div>
+    <div [ngStyle]="contentContainerStyle">
+        <div *ngFor="let item of menuItems"
+             class="project"
+             id={{item.contentId}}>
+            {{item.contentId}}
+        </div>
+    </div>
+</div>
