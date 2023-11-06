@@ -60,10 +60,12 @@ export class CodingComponent {
     
     scrollFunction() {
         const sidebar = document.getElementById('sider');
-        if (sidebar) {
+        const sideContainer = document.getElementById('sider-container');
+        if (sidebar && sideContainer) {
 
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const sidebarTop = sidebar.offsetTop;
+            console.log(scrollTop)
+            const sidebarTop = sideContainer.offsetTop;
             if (scrollTop > sidebarTop) {
                 sidebar.classList.add('fixed');
             } else {
