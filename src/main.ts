@@ -3,10 +3,6 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { appConfig } from './app/app.config';
 
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getStorage } from "firebase/storage"
-import { getPerformance } from "firebase/performance";
-import { getFunctions, httpsCallable } from "firebase/functions";
 
 
 bootstrapApplication(AppComponent, appConfig)
@@ -25,7 +21,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const performance = getPerformance(app);
-export const storage = getStorage(app);
+//const analytics = getAnalytics(app);
+//const performance = getPerformance(app);
+//export const storage = getStorage(app);
 
