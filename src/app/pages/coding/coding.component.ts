@@ -85,7 +85,7 @@ export class CodingComponent {
         for (let i = 0; i < menuItems.length; i++) {
             const content = document.getElementById(menuItems[i].contentId)!;
             const contentTop = content.offsetTop - 32;
-            const contentBottom = contentTop + content.offsetHeight;
+            const contentBottom = contentTop + content.offsetHeight - content.scrollHeight / 2;
 
             if (scrollTop >= contentTop && scrollTop < contentBottom) {
                 this.formatMenuItem(menuItems[i]);
