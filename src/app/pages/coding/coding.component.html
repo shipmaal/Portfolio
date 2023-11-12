@@ -4,23 +4,25 @@
         <div class="sider"
              id="sider"
              [ngStyle]="siderStyle">
-            <p *ngFor="let item of menuItems"
-               class="menu-item"
-               id={{item.id}}
-               (click)="onSiderClick(item)">
-                {{item.name}}
-            </p>
+            @for (item of menuItems; track item) {
+                <p class="menu-item"
+                    id={{item.id}}
+                    (click)="onSiderClick(item)">
+                    {{item.name}}
+                </p>
+            }
         </div>
     </div>
     <div id="content-container"
          [ngStyle]="contentContainerStyle">
-        <div *ngFor="let item of menuItems"
-             class="project"
+        @for (item of menuItems; track item) {
+        <div class="project"
              id={{item.contentId}}>
             <p class="project-header">
                 {{item.name}}
             </p>
             <app-content [content]="item.component"></app-content>
         </div>
+        }
     </div>
 </div>
