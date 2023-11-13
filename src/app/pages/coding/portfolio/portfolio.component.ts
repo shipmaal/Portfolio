@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ExampleComponent } from './example/example.component'
 import { FrameworkButtonComponent } from '@ui/framework-button/framework-button.component'
+
 import { AngularCodeComponent, ReactCodeComponent } from '@templates/framework-code/framework-code.component';
 
 import {
@@ -16,7 +17,10 @@ import { angularCode, reactCode } from './framework-code';
     standalone: true,
     templateUrl: './portfolio.component.html',
     styleUrls: ['./portfolio.component.scss'],
-    imports: [ExampleComponent, HighlightModule, FrameworkButtonComponent, AngularCodeComponent, ReactCodeComponent]
+    imports: [ExampleComponent, HighlightModule,
+        FrameworkButtonComponent, AngularCodeComponent,
+        ReactCodeComponent,
+    ]
 })
 export class PortfolioComponent implements OnInit{
 

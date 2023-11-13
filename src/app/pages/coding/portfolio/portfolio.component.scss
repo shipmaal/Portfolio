@@ -19,12 +19,13 @@ pre {
     }
 }
 
+
 /** Line numbers styles */
 .hljs {
-    margin: 0 1em;
+    margin: 0 0 0 1em;
     padding: 10px;
-    border: 1px solid gray;
-    border-radius: 4px;
+    border: 1.2px solid gray;
+    border-radius: 12px;
     transition: border ease 1s;
 }
 
@@ -57,7 +58,6 @@ td.hljs-ln-code {
     padding-left: 8px !important;
 }
 
-
 .example-container {
     display: flex;
     flex-direction: row;
@@ -73,10 +73,48 @@ ui-framework-button {
     top: 0; /* Align to the top */
     right: 0; /* Align to the right */
     margin: 0 1em;
-    padding: 1em 1.2em;
+    padding: 1em;
 }
 
 .code-padding {
-    height: 500px;
+    height: 440px;
 }
 
+.paragraph-div {
+    width: 48%;
+    text-align: justify;
+    word-break: break-word;
+    line-height: 1.5;
+    margin-right: 1em;
+}
+
+.p-one {
+    margin-bottom: 0;
+}
+
+.form-div {
+    display: flex;
+    flex-direction: row;
+}
+
+.example-side-paragraph {
+    padding-right: 1em;
+    margin: 0;
+}
+
+.below-example {
+    margin-top: 0;
+    line-height: 1.5;
+}
+
+angular-example {
+    float: right;
+    height: fit-content;
+    padding: 1em;
+    height: 100px;
+}
+
+.react-container {
+    width: 32px;
+    height: 32px;
+}

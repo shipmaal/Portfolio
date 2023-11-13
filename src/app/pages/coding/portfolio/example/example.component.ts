@@ -6,10 +6,13 @@ import { FormsModule } from '@angular/forms';
     standalone: true,
     template: `
     <label>Name:</label>
-    <input type="text" [(ngModel)]="name" placeholder="Enter a name here" />
+    <input type="text" [(ngModel)]="name" placeholder="Enter a name here"/>
     <hr />
-    <h1>Hello {{ name }}!</h1>
+    <div >
+        <h1 >Hello {{ name }}!</h1>
+    </div>
   `,
+  styleUrls: ['./example.component.scss'],
     imports: [FormsModule],
 })
 export class ExampleComponent {
