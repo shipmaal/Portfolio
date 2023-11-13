@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,5 +9,12 @@ import { CommonModule } from '@angular/common';
   styleUrl: './framework-button.component.scss'
 })
 export class FrameworkButtonComponent {
+    @Output() buttonState = new EventEmitter<string>();
+    codeState: string = 'Angular'
+
+    addNewItem() {
+        this.buttonState.emit(this.codeState === 'Angular' ? 'React' : 'Angular');
+        this.codeState = this.codeState === 'Angular' ? 'React' : 'Angular';
+    }
 
 }

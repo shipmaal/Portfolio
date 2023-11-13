@@ -3,16 +3,25 @@
     <div>
         <div class="example-container">
             <div class="code-container">
-                <ui-framework-button></ui-framework-button>
-                <pre>
-                    <code [highlight]="code"></code>
-                </pre>
+                <ui-framework-button (buttonState)="updateFramework($event)" />
+                <div class="code-padding">
+                    @if (framework === 'Angular') {
+                    <pre>
+                    <code [highlight]="code"
+                          [languages]="['typescript']"></code>
+                    </pre>
+                    }
+                    @else {
+                    <app-react-code></app-react-code>
+                    }
+                </div>
+
             </div>
             
             <angular-example></angular-example>
         </div>
-        <p>React</p>
-        <p>Vue</p>
     </div>
     
 </div>
+
+

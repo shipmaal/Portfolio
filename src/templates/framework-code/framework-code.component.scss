@@ -4,7 +4,6 @@ pre {
     margin-bottom: 0;
     word-wrap: break-word;
     height: fit-content;
-    width: 517px;
 
     code {
         flex: 1;
@@ -58,6 +57,8 @@ td.hljs-ln-code {
 }
 
 
+
+
 .example-container {
     display: flex;
     flex-direction: row;
@@ -75,8 +76,3 @@ ui-framework-button {
     margin: 0 1em;
     padding: 1em 1.2em;
 }
-
-.code-padding {
-    height: 500px;
-}
-
