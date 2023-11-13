@@ -1,6 +1,9 @@
 name: Deploy to Preview Channel
 
-on: push
+on:
+  push:
+    branches-ignore:
+     - main
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
