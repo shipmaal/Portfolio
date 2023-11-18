@@ -1,13 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ExampleComponent } from './example/example.component'
 import { FrameworkButtonComponent } from '@ui/framework-button/framework-button.component'
 
 import { AngularCodeComponent, ReactCodeComponent } from '@templates/framework-code/framework-code.component';
 
-import {
-    HighlightLoader,
-    HighlightModule,
-} from 'ngx-highlightjs';
+import { HighlightModule } from 'ngx-highlightjs';
 
 import { angularCode, reactCode } from './framework-code';
 
@@ -22,15 +19,10 @@ import { angularCode, reactCode } from './framework-code';
         ReactCodeComponent,
     ]
 })
-export class PortfolioComponent implements OnInit{
+export class PortfolioComponent {
 
     code = angularCode;
     framework = 'Angular';
-
-    ngOnInit() {
-    }
-
-    constructor(private hljsLoader: HighlightLoader) { }
 
     updateFramework(framework: string) {
         this.framework = framework;

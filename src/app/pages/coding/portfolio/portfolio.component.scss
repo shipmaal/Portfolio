@@ -61,12 +61,19 @@ td.hljs-ln-code {
 .example-container {
     display: flex;
     flex-direction: row;
+    height: 408px;
+}
+
+.text-container {
+    display: flex;
+    flex-direction: row;
     height: fit-content;
 }
 
 .code-container {
     position: relative;
     float: right;
+    top: 0;
 }
 
 ui-framework-button {
@@ -89,9 +96,6 @@ ui-framework-button {
     margin-right: 1em;
 }
 
-.p-one {
-    margin-bottom: 0;
-}
 
 .form-div {
     display: flex;
