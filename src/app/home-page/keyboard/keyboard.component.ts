@@ -6,8 +6,8 @@ import { PianoService } from '@services/piano.service';
 import { Subscription, fromEvent, filter, merge, groupBy, map, distinctUntilChanged, mergeAll, Observable, Subject, throttleTime, debounceTime, bufferCount } from 'rxjs';
 
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
 
 import * as Tone from 'tone';
 
