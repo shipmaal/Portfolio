@@ -11,7 +11,6 @@ import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
 
 import * as Tone from 'tone';
 
-
 @Component({
     selector: 'app-keyboard',
     templateUrl: './keyboard.component.html',
@@ -120,11 +119,9 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
-
     ngOnInit(): void {
         window.addEventListener('pointermove', this.onPointerMove);
     }
-
 
     ngAfterViewInit() {
         this.createCanvas();
@@ -132,11 +129,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.animate();
     }
 
-
-    ngOnDestroy() {
-       
-    }
-
+    ngOnDestroy() { }
 
     createCanvas = () => {
         let canvas = document.querySelector("canvas");
@@ -155,7 +148,6 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.pianoRenderer.toneMappingExposure = 1;
     }
 
-
     resizeCanvasToDisplaySize() {
         const canvas = this.pianoRenderer.domElement;
 
@@ -169,7 +161,6 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-
     onPointerMove = (event: MouseEvent) => {
         Tone.start();
         const rect = this.pianoRenderer.domElement.getBoundingClientRect();
@@ -177,7 +168,6 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.pointer.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
         this.pointer.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
     }
-
 
     onKeyPress = (event: KeyboardEvent, action: string) => {
         if (event.repeat || this.currentRoute !== '/') {
@@ -222,99 +212,74 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.keyboardManager(keyConversion[key], Number(action), 'key');
     }
 
-
     async createPiano(): Promise<void> {
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.25, 1000);
         this.scene.add(this.camera);
 
-        try {
-            await this.loadEXRBackground();
-            await this.loadBaseGLB();
-            await this.loadKeyboardGLB();
-        } catch (error) {
-            console.error('Error loading model file:', error);
-        }
+        this.loadBaseGLB();
+        this.loadKeyboardGLB();
 
-        const light = new THREE.AmbientLight(0xfffada, 0.8);
+        const light = new THREE.AmbientLight(0xfffada, 4);
         this.scene.add(light)
     }
 
-
-    async loadEXRBackground() {
-        //const backgroundUrl = await this.downloadFile('assets/brown_photostudio_04_1k.exr');
-        const backgroundUrl = 'assets/brown_photostudio_04_1k.exr';
-
-        return new Promise((resolve, reject) => {
-            new EXRLoader().load(backgroundUrl, (texture) => {
-                texture.mapping = THREE.EquirectangularReflectionMapping;
-                this.scene.environment = texture;
-                resolve(texture);
-            }, undefined, reject);
-        });
-    }
-
-    
-    async loadBaseGLB() {
-        //const baseUrl = await this.downloadFile('assets/Base.glb');
+    loadBaseGLB() {
         const baseUrl = 'assets/Base.glb';
 
-        return new Promise<void>((resolve, reject) => {
-            new GLTFLoader().load(baseUrl, (gltf) => {
-                const object = gltf.scene;
-                const base = object.children[2];
+        return new GLTFLoader().load(baseUrl, (gltf) => {
+            const object = gltf.scene;
+            const base = object.children[2];
+            
+            this.lidClip = gltf.animations[1];
+            this.lidMixer = new THREE.AnimationMixer(object);
 
-                object.traverse((subObject) => {
-                    if (subObject instanceof THREE.Mesh) {
-                        subObject.material.envMapIntensity = 0;
-                    }
-                });
+            this.camera.position.x = base.position.x;
+            this.camera.position.y = base.position.y + 184;
+            this.camera.position.z = base.position.z + 150;
+            this.camera.lookAt(new THREE.Vector3(156, 0, -74));
 
-                this.lidClip = gltf.animations[1];
-                this.lidMixer = new THREE.AnimationMixer(object);
-
-                this.camera.position.x = base.position.x;
-                this.camera.position.y = base.position.y + 184;
-                this.camera.position.z = base.position.z + 150;
-                this.camera.lookAt(new THREE.Vector3(156, 0, -74));
-
-                this.scene.add(object);
-                resolve();
-            }, undefined, reject);
+            this.scene.add(object);
+            console.log(this.scene.children);
         });
     }
 
-
-    async loadKeyboardGLB() {
-        //const keyboardUrl = await this.downloadFile('assets/Keyboard.glb');
+    loadKeyboardGLB() {
         const keyboardUrl = 'assets/Keyboard.glb';
+        const backgroundUrl = 'assets/brown_photostudio_04_1k.exr';
+        let texture: THREE.Texture;
 
-        return new Promise<void>((resolve, reject) => {
-            new GLTFLoader(this.manager).load(keyboardUrl, (gltf) => {
-                this.clips = gltf.animations;
-                this.clips.forEach((clip) => {
-                    this.clipNames.push(clip.name);
-                });
+        new EXRLoader().load(backgroundUrl, (_texture) => {
+            _texture.mapping = THREE.EquirectangularReflectionMapping;
+            texture =  _texture;
+        });
 
-                const object = gltf.scene;
-                object.children.forEach((key) => {
-                    if (key.name.includes('#')) {
-                        key.traverse((mesh) => {
-                            if (mesh instanceof THREE.Mesh && !(mesh.name.includes('_1'))) {
-                                mesh.material.envMapIntensity = 0.25;
-                            }
-                        });
-                    }
-                });
+        return new GLTFLoader(this.manager).load(keyboardUrl, (gltf) => {
+            this.clips = gltf.animations;
+            this.clips.forEach((clip) => {
+                this.clipNames.push(clip.name);
+            });
 
-                this.mixer = new THREE.AnimationMixer(object);
-                this.scene.add(object);
-                this.sceneLoaded = true;
-                resolve();
-            }, undefined, reject);
+            const object = gltf.scene;
+            object.children.forEach((key) => {
+                if (key.name.includes('#')) {
+                    key.traverse((mesh) => {
+                        if (mesh instanceof THREE.Mesh && !(mesh.name.includes('_1'))) {
+                            mesh.material.envMap = texture;
+                            mesh.material.envMapIntensity = 0.25;
+                            mesh.material.needsUpdate = true;
+                        }
+                    });
+                }
+            });
+
+            object.name = 'Keyboard';
+            this.mixer = new THREE.AnimationMixer(object);
+            this.scene.environment = null;
+            this.scene.add(object);
+            this.sceneLoaded = true;
         });
     }
-
 
     animate = () => {
         this.resizeCanvasToDisplaySize();
@@ -327,13 +292,10 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.render();
 
-
         if (this.currentRoute === '/') {
             requestAnimationFrame(this.animate);
-
         }
     }
-
 
     lidup(): void {
         const action = this.lidMixer.clipAction(this.lidClip);
@@ -343,7 +305,6 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         action.play();
     }
 
-
     render = () => {
         this.pianoRenderer.render(this.scene, this.camera);
 
@@ -351,7 +312,6 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
             this.intersectionCheck();
         }
     }
-
 
     keyAction(animationName: string, timeScale: number) {
         const clipNum = this.clipNames.indexOf(animationName);
@@ -373,7 +333,6 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         action.play();
     }
 
-
     keyboardManager(intersectedKey: string, intersectedAction: number, interactionType: string = 'mouse') { // action: 0 = up, 1 = down
         const timeScale = 1.25 * ((intersectedAction * 2) - 1);
         this.keyAction(intersectedKey, timeScale);
@@ -384,7 +343,6 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
             this.pianoService.sendMenuEvent(key, down);
         }
     }
-
 
     intersectionCheck() { // expirement with rxjs throttling to stop really fast trills! //// throttling does not work:( need to do something more clever booooo
         this.raycaster.setFromCamera(this.pointer, this.camera);
@@ -428,7 +386,6 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         }
     }
-
 
     parseToNote(animationName: string): string {
         if (animationName === 'C.000Action') {

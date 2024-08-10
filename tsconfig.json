@@ -2,9 +2,10 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -12,9 +13,8 @@
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
     "declaration": false,
-    "downlevelIteration": true,
     "experimentalDecorators": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "importHelpers": true,
     "target": "ES2022",
     "module": "ES2022",
@@ -24,9 +24,10 @@
         "dom"
     ],
     "paths": {
-        "@services/*": [ "src/services/*" ],
-        "@templates/*": [ "src/templates/*" ],
-        "@ui/*": [ "src/ui/*" ]
+        "@services/*": [ "services/*" ],
+        "@templates/*": [ "templates/*" ],
+        "@ui/*": [ "ui/*" ],
+        "@coding/*": [ "app/pages/coding/*" ]
     }
   },
   "angularCompilerOptions": {
@@ -34,5 +35,6 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  }
+  },
+  "include": ["src/**/*.ts"],
 }

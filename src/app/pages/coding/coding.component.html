@@ -1,1 +1,28 @@
-<content-container><p>More coming soon</p></content-container>
+<div class="container">
+    <div id="sider-container"
+         [ngStyle]="siderContainerStyle">
+        <div class="sider"
+             id="sider"
+             [ngStyle]="siderStyle">
+            @for (item of menuItems; track item) {
+                <p class="menu-item"
+                    id={{item.id}}
+                    (click)="onSiderClick(item)">
+                    {{item.name}}
+                </p>
+            }
+        </div>
+    </div>
+    <div id="content-container"
+         [ngStyle]="contentContainerStyle">
+        @for (item of menuItems; track item) {
+        <div class="project"
+             id={{item.contentId}}>
+            <p class="project-header">
+                {{item.name}}
+            </p>
+            <app-content [content]="item.component"></app-content>
+        </div>
+        }
+    </div>
+</div>

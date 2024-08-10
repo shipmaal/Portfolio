@@ -1,0 +1,47 @@
+<div>
+    <div>
+        <div class="example-container">
+            <div class="paragraph-div">
+                <p class="p-one">
+                    When I started this project, I had no experience or knowledge of web development.
+                    As such, the first thing I did was to learn the basics of HTML, CSS, and TypeScript.
+                    Once I felt comfortable I did research on the tech stack I wanted to use.
+                </p>
+                <angular-example></angular-example>
+                <p>
+                    The first big decision I had to make was what framework I wanted to use.
+                    During my research the two frameworks that stood out to me were Angular and React.
+                    I decided to go with angular because I liked the idea of having everything in one place.
+                    Another reason I chose Angular was because I preferred the idea of having separate Typescript
+                    and HTML files as opposed to TSX. I also decided to use SCSS because I like having for loops in my CSS code.
+                </p>
+            </div>
+            <div class="code-container">
+                <ui-framework-button (buttonState)="updateFramework($event)" />
+                <div class="code-padding">
+                    @if (framework === 'Angular') {
+                    <pre>
+                    <code [highlight]="code" [language]="'typescript'"></code>
+                    </pre>
+                    }
+                    @else {
+                    <app-react-code></app-react-code>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="text-container paragraph-div">
+            <p class="below-example">
+                My next decision was for what I wanted my site to look like.
+                Music, and specifically piano, has always been a big part of my life,
+                so I decided to incorporate some music themed elements.
+                My first thought was to have a piano keyboard serve as the main menu of the site.
+                Originally this was just going to be an SVG. That was when I found THREE.js.
+            </p>
+            <p>
+            </p>
+        </div>
+    </div>
+</div>
+
+
