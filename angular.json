@@ -6,17 +6,15 @@
     "AlanPortfolio": {
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": {
-              "base": "dist/AlanPortfolio"
-            },
+            "outputPath": "dist/AlanPortfolio",
             "index": "src/index.html",
             "polyfills": [
-                "zone.js"
+              "zone.js"
             ],
             "allowedCommonJsDependencies": [
-                "automation-events"
+              "automation-events"
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
@@ -26,7 +24,7 @@
             "styles": [
               "src/styles.scss"
             ],
-            "browser": "src/main.ts"
+            "main": "src/main.ts"
           },
           "configurations": {
             "production": {
