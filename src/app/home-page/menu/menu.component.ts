@@ -34,7 +34,7 @@ export class MenuComponent implements OnInit {
         { label: "Music  Experience", link: "/music" },
         { label: "Contact Me", link: "/contact" }
     ];
-    buttonStyle: string[] = Array(5).fill('hidden');
+    buttonStyle = Array(5).fill('hidden');
 
     controllerStates: { [key: string]: boolean[] } = {
         "keyAction": Array(5).fill(false), // true: request for keydown, false: request for keyup

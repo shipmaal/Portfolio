@@ -9,14 +9,17 @@
             Alan's Portfolio
         </h1>
     </div>
-    <div *ngIf="displayMenu" id="menu" class="menu">
-        <div [ngClass]="menuClass[i]" *ngFor="let item of menuItems; let i = index">
-            <div
-                (mouseenter)="onMouseEnter(i)"
-                (mouseleave)="onMouseLeave(i)"
-                (click)="onClick(i)">
-                <p>{{ item.label }}</p>
-            </div>
-        </div>
-    </div>
+    @if (displayMenu) {
+        <div id="menu" class="menu">
+            @for (item of menuItems; track $index; let i = $index) {
+                <div
+                    [ngClass]="menuClass[i]"
+                    (mouseenter)="onMouseEnter(i)"
+                    (mouseleave)="onMouseLeave(i)"
+                    (click)="onClick(i)">
+                    <p>{{ item.label }}</p>
+                </div>
+            }
+        </div>  
+    }
 </div>
