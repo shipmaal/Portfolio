@@ -26,3 +26,5 @@ jobs:
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_PORTFOLIO_EA11E }}"
           projectId: portfolio-ea11e
           channelId: preview  # Add this if you want to deploy to a specific channel
+        env:
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
