@@ -15,15 +15,13 @@
                     Another reason I chose Angular was because I preferred the idea of having separate Typescript
                     and HTML files as opposed to TSX. I also decided to use SCSS because I like having for loops in my CSS code.
                 </p>
-
             </div>
             <div class="code-container">
                 <ui-framework-button (buttonState)="updateFramework($event)" />
                 <div class="code-padding">
                     @if (framework === 'Angular') {
                     <pre>
-                    <code [highlight]="code"
-                          [languages]="['typescript']"></code>
+                    <code [highlight]="code" [language]="'typescript'"></code>
                     </pre>
                     }
                     @else {
@@ -32,7 +30,6 @@
                 </div>
             </div>
         </div>
-
         <div class="text-container paragraph-div">
             <p class="below-example">
                 My next decision was for what I wanted my site to look like.
@@ -42,12 +39,9 @@
                 Originally this was just going to be an SVG. That was when I found THREE.js.
             </p>
             <p>
-
             </p>
         </div>
-
     </div>
-    
 </div>
 
 
