@@ -4,7 +4,7 @@ import { NgStyle } from '@angular/common';
 import { HeaderComponent } from './header/header.component'
 import { FooterComponent } from './footer/footer.component';
 import { HomePageComponent } from './home-page/home-page.component';
-import { RouterModule, Router, NavigationStart } from '@angular/router';
+import { RouterModule, Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 
@@ -16,17 +16,18 @@ import { Subscription } from 'rxjs';
     imports: [RouterModule, NgStyle, HomePageComponent, HeaderComponent, FooterComponent]
 })
 export class AppComponent implements OnInit {
-    bodyWidth!: { [key: string]: string };
+    bodyWidth: { [key: string]: string } = {'width': '1132px'};
     private routerSubscription!: Subscription;
   
     constructor(private router: Router) {}
   
     ngOnInit(): void {
-        this.updateBodyWidth(this.router.url);
+        // this.updateBodyWidth(this.router.url);
+        console.log(this.router.url);
   
         this.routerSubscription = this.router.events.subscribe(event => {
-            if (event instanceof NavigationStart) {
-                this.updateBodyWidth(event.url);
+            if (event instanceof NavigationEnd) {
+                    this.updateBodyWidth(event.urlAfterRedirects);
             }
         });
     }
