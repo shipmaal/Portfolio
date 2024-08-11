@@ -16,7 +16,7 @@ export class HeaderComponent implements OnInit {
     headerClass: string[] = ["rotate"];
     titleMargin = "2vh 0 0 0"
     currentRoute!: string;
-    doDisplay = false;
+    doDisplay = true;
     canvasStyle = { 'cursor': 'default', 'opacity': '100' };
     menuClass = Array(5).fill(["menu-item", ""]);
 
@@ -44,4 +44,5 @@ export class HeaderComponent implements OnInit {
         });
     }
 }
+
     

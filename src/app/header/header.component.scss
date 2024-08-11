@@ -57,21 +57,6 @@
     background-repeat: repeat-x;
 }
 
-.animation {
-    transform-style: preserve-3d;
-    transform-origin: center center -75px;
-    transition: transform 0.5s ease;
-    transition-delay: 1s;
-}
-
-.title {
-    transition: margin 0.5s ease;
-}
-
-.rotate {
-  transform-origin: center center -75px;
-  transform: rotateX(0deg);
-}
 
 .header-link {
     text-decoration: none; /* Remove underline */
