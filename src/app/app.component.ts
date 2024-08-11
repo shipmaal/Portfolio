@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import { NgSwitch, NgSwitchDefault, NgSwitchCase } from '@angular/common';
+import { NgStyle } from '@angular/common';
 import { HeaderComponent } from './header/header.component'
 import { FooterComponent } from './footer/footer.component';
 import { HomePageComponent } from './home-page/home-page.component';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router, NavigationStart } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -12,10 +13,31 @@ import { RouterModule } from '@angular/router';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
     standalone: true,
-    imports: [NgSwitch, NgSwitchDefault, NgSwitchCase, HomePageComponent, HeaderComponent, FooterComponent, RouterModule]
+    imports: [RouterModule, NgStyle, HomePageComponent, HeaderComponent, FooterComponent]
 })
-export class AppComponent {
-    title = 'AlanPortfolio';
+export class AppComponent implements OnInit {
+    bodyWidth!: { [key: string]: string };
+    private routerSubscription!: Subscription;
+  
+    constructor(private router: Router) {}
+  
+    ngOnInit(): void {
+        this.updateBodyWidth(this.router.url);
+  
+        this.routerSubscription = this.router.events.subscribe(event => {
+            if (event instanceof NavigationStart) {
+                this.updateBodyWidth(event.url);
+            }
+        });
+    }
+  
+    ngOnDestroy(): void {
+        if (this.routerSubscription) {
+            this.routerSubscription.unsubscribe();
+        }
+    }
+  
+    private updateBodyWidth(url: string): void {
+        this.bodyWidth = url === '/' ? { 'width': '100%' } : { 'width': '1132px' };
+    }
 }
-
-
