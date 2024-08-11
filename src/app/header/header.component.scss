@@ -7,15 +7,16 @@
 }
 
 .container {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 .menu {
+    width: 100%;
     display: flex;
-    justify-content: center;
-    gap: 48px;
+    justify-content: space-between;
 }
 
 .menu-item {
@@ -29,6 +30,8 @@
     border-color: black;
     border-width: 2.4px;
     border-radius: 0px;
+    text-decoration: none; /* Remove underline */
+    color: inherit;
 }
 
 .menu-item:hover {
@@ -54,20 +57,11 @@
     background-repeat: repeat-x;
 }
 
-.animation {
-    transform-style: preserve-3d;
-    transform-origin: center center -75px;
-    transition: transform 0.5s ease;
-    transition-delay: 1s;
-}
 
-.title {
-    transition: margin 0.5s ease;
-}
-
-.rotate {
-  transform-origin: center center -75px;
-  transform: rotateX(0deg);
+.header-link {
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Inherit color from parent */
+    display: block; /* Make the link behave like a block element */
 }
 
 .sticky {
