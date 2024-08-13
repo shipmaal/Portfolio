@@ -7,9 +7,8 @@ import { Observable, Subject } from 'rxjs'
 export class PianoService {
 
     private loadSubject = new Subject<void>();
-    private menuSubject = new Subject<[number, boolean]>();
+    private menuSubject = new Subject<[number, boolean, 'menu' | 'piano']>();
     private keySubject = new Subject<[number, boolean]>();
-    private cursorSubject = new Subject<string>();
     private routeSubject = new Subject<void>();
 
     sendLoadEvent() {
@@ -28,20 +27,12 @@ export class PianoService {
         return this.keySubject.asObservable();
     }
 
-    sendMenuEvent(key: number, down: boolean) {
-        this.menuSubject.next([key, down]);
+    sendMenuEvent(key: number, down: boolean, from: 'menu' | 'piano') {
+        this.menuSubject.next([key, down, from]);
     }
 
-    getMenuEvent(): Observable<[number, boolean]> {
+    getMenuEvent(): Observable<[number, boolean, 'menu' | 'piano']> {
         return this.menuSubject.asObservable();
-    }
-
-    sendMouseState(state: string) {
-        this.cursorSubject.next(state);
-    }
-
-    getMouseState(): Observable<string> {
-        return this.cursorSubject.asObservable();
     }
 
     sendRouteState() {

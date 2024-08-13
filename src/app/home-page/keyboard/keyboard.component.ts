@@ -1,15 +1,15 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 
-import { PianoService } from '@services/piano.service';
-import { Subscription, fromEvent, filter, merge, groupBy, map, distinctUntilChanged, mergeAll, Observable, Subject, throttleTime, debounceTime, bufferCount } from 'rxjs';
-
+import { Subscription, fromEvent, filter, merge, groupBy, map, distinctUntilChanged, mergeAll, Observable, Subject, bufferCount } from 'rxjs';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
-
 import * as Tone from 'tone';
+
+import { PianoService } from '@services/piano.service';
+
 
 @Component({
     selector: 'app-keyboard',
@@ -25,6 +25,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
     LoadEventSub!: Subscription;
     KeyRequestSub!: Subscription;
     mouseStateSub!: Subscription;
+    menuEventSub!: Subscription;
 
     manager: THREE.LoadingManager = new THREE.LoadingManager();
     pianoRenderer!: THREE.WebGLRenderer;
@@ -38,9 +39,11 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
     intersectedArray: string[] = [];
     raycaster: THREE.Raycaster = new THREE.Raycaster();
     pointer: THREE.Vector2 = new THREE.Vector2();
+    scrollOffset: THREE.Vector2 = new THREE.Vector2();
     camera!: THREE.PerspectiveCamera;
 
     menuKeys: string[] = ["G.001Action", "A.001Action", "B.001Action", "CAction", "DAction"];
+    borderKeys: string[] = ['F.001Action', 'EAction']
     canvasStyle: { [key: string]: string } = { 'cursor': 'default', 'top': '0' };
     currentRoute: string;
 
@@ -78,30 +81,22 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.currentRoute = this.router.url;
             });
 
-
-        this.pianoService.getLoadEvent().subscribe(() => {
-            this.lidup();
+        this.pianoService.getLoadEvent().subscribe(() => {this.lidup()});
+        this.pianoService.getRouteState().subscribe(() => {this.canvasStyle['top'] = '-25vh'});
+        this.menuEventSub = this.pianoService.getMenuEvent().pipe(
+            filter((event) => event[2] === 'menu')
+        ).subscribe((event) => {
+            if (event[0] < 0 ) {
+                this.keyAction(this.borderKeys[-1 * (event[0] + 1)], Number(event[1]));
+            } else {
+                this.keyAction(this.menuKeys[event[0]], Number(event[1]));
+            }
         });
 
-        this.pianoService.getMouseState().subscribe((state) => {
-            this.canvasStyle['cursor'] = state;
-        });
+        this.manager.onLoad = function () {pianoService.sendLoadEvent()}
 
-        this.pianoService.getRouteState().subscribe(() => {
-            this.canvasStyle['top'] = '-25vh';
-        });
-
-        this.manager.onLoad = function () {
-            pianoService.sendLoadEvent();
-        }
-
-        this.pianoActions$.subscribe((action) => {
-            this.keyboardManager(action[0], action[1]);
-        });
-
-        this.pianoBuffer$.subscribe((actions) => {
-            console.log(actions)
-        });
+        this.pianoActions$.subscribe((action) => {this.keyboardManager(action[0], action[1])});
+        this.pianoBuffer$.subscribe((actions) => {console.log(actions)});
 
         const keyDowns = fromEvent<KeyboardEvent>(document, 'keydown');
         const keyUps = fromEvent<KeyboardEvent>(document, 'keyup');
@@ -120,7 +115,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        window.addEventListener('pointermove', this.onPointerMove);
+        // window.addEventListener('pointermove', this.onPointerMove);
     }
 
     ngAfterViewInit() {
@@ -129,7 +124,13 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.animate();
     }
 
-    ngOnDestroy() { }
+    ngOnDestroy() { 
+        this.LoadEventSub.unsubscribe();
+        this.KeyRequestSub.unsubscribe();
+        this.mouseStateSub.unsubscribe();
+        this.menuEventSub.unsubscribe();
+        window.removeEventListener('pointermove', this.onPointerMove);
+    }
 
     createCanvas = () => {
         let canvas = document.querySelector("canvas");
@@ -161,12 +162,13 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    @HostListener('window:pointermove', ['$event'])
     onPointerMove = (event: MouseEvent) => {
         Tone.start();
         const rect = this.pianoRenderer.domElement.getBoundingClientRect();
 
-        this.pointer.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
-        this.pointer.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+        this.pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        this.pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
     }
 
     onKeyPress = (event: KeyboardEvent, action: string) => {
@@ -174,7 +176,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
         }
 
-        const key: string = event.key;
+        const key: string = event.key.toLowerCase();
         const keyConversion: { [key: string]: string } = {
             'z': 'A.000Action',
             'x': 'A#.000Action',
@@ -212,7 +214,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.keyboardManager(keyConversion[key], Number(action), 'key');
     }
 
-    async createPiano(): Promise<void> {
+    createPiano(): void {
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.25, 1000);
         this.scene.add(this.camera);
@@ -220,7 +222,7 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loadBaseGLB();
         this.loadKeyboardGLB();
 
-        const light = new THREE.AmbientLight(0xfffada, 4);
+        const light = new THREE.AmbientLight(0xfffada, 3.2);
         this.scene.add(light)
     }
 
@@ -313,7 +315,8 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    keyAction(animationName: string, timeScale: number) {
+    keyAction(animationName: string, intersectedAction: number) {
+        const timeScale = 1.25 * ((intersectedAction * 2) - 1);
         const clipNum = this.clipNames.indexOf(animationName);
         const action = this.mixer.clipAction(this.clips[clipNum]);
         const noteName = this.parseToNote(animationName);
@@ -334,14 +337,18 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     keyboardManager(intersectedKey: string, intersectedAction: number, interactionType: string = 'mouse') { // action: 0 = up, 1 = down
-        const timeScale = 1.25 * ((intersectedAction * 2) - 1);
-        this.keyAction(intersectedKey, timeScale);
-
+        
         if (this.menuKeys.includes(intersectedKey) && interactionType === 'mouse') {
             const key = this.menuKeys.indexOf(intersectedKey);
             const down = intersectedAction !== 0;
-            this.pianoService.sendMenuEvent(key, down);
+            this.pianoService.sendMenuEvent(key, down, 'piano');
+            this.canvasStyle['cursor'] = down ? 'pointer' : 'default';
+        } else if (this.borderKeys.includes(intersectedKey) && intersectedAction === 1) {
+            this.pianoService.sendMenuEvent(-1 * (this.borderKeys.indexOf(intersectedKey) + 1), true, 'piano');
+        } else {
+            this.keyAction(intersectedKey, intersectedAction);
         }
+
     }
 
     intersectionCheck() { // expirement with rxjs throttling to stop really fast trills! //// throttling does not work:( need to do something more clever booooo
@@ -405,4 +412,5 @@ export class KeyboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
         return animationName
     }
+
 }
