@@ -25,12 +25,14 @@ $overlap: -100px;
 .tooltipDiv {
     position: absolute;
     display: inline-block;
+    z-index: 3;
     
 }
 
 .menu {
     display: table;
     width: 1.2 * $step;
+    z-index: 3;
     height: 8.2vh;
     font-size: 1.8vw;
     margin: 1%;
@@ -55,10 +57,11 @@ span {
 .vertical {
     top: $overlap;
     position: absolute;
-    opacity: 0;
-    width: 1 * $step;
-    height: 2vh;
-    transform: translateY(11.5vh);
-    left: 0.1 * $step;
+    opacity: 0.5;
+    background-color: red;
+    width: 1.2 * $step;
+    height: 10vh;
+    transform: translateY(8.5vh);
+    left: -0;
 }
 
