@@ -27,30 +27,14 @@ export class MenuComponent implements OnInit {
     clientX = 0;
     clientY = 0;
 
-    controllerStates: { [key: string]: boolean[] } = {
-        "keyAction": Array(5).fill(false), // true: request for keydown, false: request for keyup
-        "keyStates": Array(5).fill(false), // true: key is down, false: key is up
-        "button": Array(5).fill(false), // true: mouse is over menu button, false: mouse not
-    }
-
     ngOnInit(): void {
         this.pianoService.getMenuEvent().pipe(
             filter((event: [number, boolean, 'menu' | 'piano']) => event[2] === 'piano')
         ).subscribe((event: [number, boolean, 'menu' | 'piano']) => { // [key, down]
-            this.controllerStates["keyAction"][event[0]] = event[1]; // index of key is set to appropriate action
             console.log('event', event);
             this.menuController.update(event[0], event[1], 'key');
         });
         
-        // Mouse event listeners for menu buttons
-        // Used for routing to different pages
-        // Could also just use a elements in html
-        // window.addEventListener('click', (event: MouseEvent) => {
-        //     const index = this.controllerStates["keyStates"].indexOf(true);
-        //     if (index !== -1) {
-        //         this.onClick(index);
-        //     }
-        // });
 
         window.addEventListener('mousemove', (event: MouseEvent) => {
             this.clientX = event.clientX;
@@ -63,19 +47,6 @@ export class MenuComponent implements OnInit {
             const y = this.clientY;
             this.menuController.updateAnchor(x, y);
         });
-    }
-
-    // onMouseEnter(index: number) {
-    //     this.menuController.onMouseEnter(index);
-    // }
-
-    // onMouseLeave(index: number) {
-    //     this.menuController.onMouseLeave(index);
-    // }
-
-    onClick(index: number) {
-        const page = this.menuItems[index].link;
-        this.router.navigate([page]);
     }
 }
 
@@ -96,7 +67,11 @@ class MenuController {
     constructor(private pianoService: PianoService, 
                 numKeys: number, 
                 numButtons: number) {
-      this.states = {'key': Array(numKeys).fill(false), 'button': Array(numKeys).fill(false)};
+
+      this.states = {'key': Array(numKeys).fill(false), 
+                     'down': Array(numKeys).fill(false),
+                     'button': Array(numKeys).fill(false)
+                    };
     }
   
     public update(index: number, status: boolean, type: 'key' | 'button') {
@@ -105,32 +80,31 @@ class MenuController {
     }
     
     private updateMenu(index: number, status: boolean, type: 'key' | 'button') {
-        if (index >= 0) {
-            this.states[type][index] = status;
-        }
-        const keyStates = this.states['key'];
+        if (index >= 0) this.states[type][index] = status;
+        const keyAction = this.states['key'];
         const buttonStates = this.states['button'];
-        console.log('Updating menu with key states:', keyStates);
-        console.log('Updating menu with button states:', buttonStates);
         // moving anchor
-        keyStates[index] ? this.showAnchor(this.menuItems[index].link, window.screenX / 2, window.screenY / 2) : this.hideAnchor();
+        keyAction[index] ? this.showAnchor(this.menuItems[index].link, window.screenX / 2, window.screenY / 2) : this.hideAnchor();
         
-        // toggling button visibility
-
-
         if (!(type === 'key' && !status && buttonStates[index])) {
-            this.buttonStyles[index] = keyStates[index] ? 'visible' : 'hidden';
-            this.pianoService.sendMenuEvent(index, keyStates[index], 'menu');
+            this.buttonStyles[index] = keyAction[index] ? 'visible' : 'hidden';
+            if (keyAction[index] !== this.states['down'][index]) {
+                this.pianoService.sendMenuEvent(index, keyAction[index], 'menu');
+                this.states['down'][index] = keyAction[index];
+            }
 
-            if (keyStates.indexOf(true) !== buttonStates.indexOf(true) && buttonStates.indexOf(true) !== -1) {
+            if (keyAction.indexOf(true) !== buttonStates.indexOf(true) && buttonStates.indexOf(true) !== -1) {
                 this.pianoService.sendMenuEvent(buttonStates.indexOf(true), false, 'menu');
+                this.states['down'][index] = keyAction[index];
+
                 this.buttonStyles[buttonStates.indexOf(true)] = 'hidden';
                 this.states['button'][buttonStates.indexOf(true)] = false;
             } 
         } 
         if (index < 0) {
-            console.log('hi mom')
             this.pianoService.sendMenuEvent(index, status, 'menu');
+            this.states['down'][index] = keyAction[index];
+
         }
     }
   

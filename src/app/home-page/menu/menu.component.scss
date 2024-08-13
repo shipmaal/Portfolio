@@ -42,6 +42,8 @@ $overlap: -100px;
     border-radius: 20px;
     text-align: center;
     transition: background-color ease 0.5s;
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Inherit color from parent */
 }
 
 .menu:hover {

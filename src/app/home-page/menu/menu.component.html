@@ -1,14 +1,14 @@
 <div class="tooltipContainer">
     @for (style of menuController.buttonStyles; track $index; let i = $index) {
-        <div
+        <a  
+            href="{{ menuItems[i].link }}"
             class="tooltipDiv menu"
             [style.visibility]="style"
             (mouseenter)="menuController.onMouseEnter(i)"
             (mouseleave)="menuController.onMouseLeave(i)"
-            (click)="onClick(i)"
         >
             <span>{{ menuItems[i].label }}</span>
-            <a  class="vertical"></a>
-        </div>
+            <div class="vertical"></div>
+        </a>
     }
 </div>
