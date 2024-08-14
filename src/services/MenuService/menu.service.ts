@@ -81,12 +81,10 @@ export class MenuService {
   }
 
   public onMouseEnter(index: number) {
-    console.log('mouse enter: ', index);
     this.update(index, true, 'button');
   }
 
   public onMouseLeave(index: number) {
-    console.log('mouse leave: ', index);
     this.update(index, false, 'button');
   }
 

@@ -18,9 +18,9 @@ export class PianoService {
     keyUps = fromEvent<KeyboardEvent>(document, 'keyup');
 
     pianoPresses$ = merge(this.keyDowns, this.keyUps).pipe(
-      groupBy((event: any) => event.keyCode),
-      map((group: any) => group.pipe(
-        distinctUntilChanged((prev: any, curr: any) => prev.type === curr.type)
+      groupBy((event) => event.code),
+      map((group) => group.pipe(
+        distinctUntilChanged((prev, curr) => prev.type === curr.type)
       )),
       mergeAll()
     );

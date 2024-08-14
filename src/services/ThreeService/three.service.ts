@@ -50,14 +50,12 @@ export class ThreeService {
       }
     });
     pianoService.pianoActions$.subscribe((action) => {this.keyboardManager(action[0], action[1])});
-    pianoService.pianoPresses$.subscribe((event: any) => { this.onKeyPress(event, event.type); });
+    pianoService.pianoPresses$.subscribe((event: KeyboardEvent) => { this.onKeyPress(event, event.type); });
 
     pianoService.getAudioState().subscribe((state) => {
       this.isMuted = state;
-      console.log(this.isMuted)
       if (this.muteCount === 0 && !this.isMuted) {
         this.muteCount++;
-        console.log('starting')
         toneService.start();
       }
     });
@@ -317,7 +315,6 @@ export class ThreeService {
   }
 
   keyAction(animationName: string, intersectedAction: number) {
-    console.log(this.isMuted)
     const timeScale = 1.25 * ((intersectedAction * 2) - 1);
     const clipNum = this.clipNames.indexOf(animationName);
     const action = this.mixer.clipAction(this.clips[clipNum]);

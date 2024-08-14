@@ -25,7 +25,6 @@ export class MuteButtonComponent implements OnInit {
   }
 
   toggleShrinkGrow() {
-      console.log('Audio state:', this.muteState);
       this.pianoService.sendAudioState(!this.muteState);
       this.dashOffset = this.isShrinking ? 0 : this.dashArray;
       this.isShrinking = !this.isShrinking;
