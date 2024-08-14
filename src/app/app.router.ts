@@ -1,6 +1,11 @@
 import { Routes } from '@angular/router';
-
 import { HomePageComponent } from './home-page/home-page.component';
+import { AboutComponent } from './pages/about/about.component';
+import { EducationComponent } from './pages/education/education.component';
+import { CodingComponent } from './pages/coding/coding.component';
+import { MusicComponent } from './pages/music/music.component';
+import { ContactComponent } from './pages/contact/contact.component';
+
 
 export const APP_ROUTES: Routes = [
     {
@@ -9,33 +14,22 @@ export const APP_ROUTES: Routes = [
     },
     {
         path: 'about',
-        loadComponent: () =>
-            import('./pages/about/about.component')
-                .then(m => m.AboutComponent)
+        component: AboutComponent
     },
     {
         path: 'education',
-        loadComponent: () =>
-            import('./pages/education/education.component')
-                .then(m => m.EducationComponent)
+        component: EducationComponent
     },
     {
         path: 'coding',
-        loadComponent: () =>
-            import('./pages/coding/coding.component')
-                .then(m => m.CodingComponent)
+        component: CodingComponent
     },
     {
-        path: 'music',
-        loadComponent: () =>
-            import('./pages/music/music.component')
-                .then(m => m.MusicComponent)
+      path: 'music',
+      component: MusicComponent
     },
     {
-        path: 'contact',
-        loadComponent: () =>
-            import('./pages/contact/contact.component')
-                .then(m => m.ContactComponent)
+      path: 'contact',
+      component: ContactComponent
     }
-
-]
+];
