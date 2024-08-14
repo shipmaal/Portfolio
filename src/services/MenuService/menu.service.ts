@@ -25,7 +25,6 @@ export class MenuService {
   private clientX = 0;
   private clientY = 0;
 
-
   constructor(private pianoService: PianoService) {
     this.pianoService.getMenuEvent().pipe(
       filter((event: [number, boolean, 'menu' | 'piano']) => event[2] === 'piano')

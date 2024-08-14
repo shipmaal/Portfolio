@@ -1,6 +1,5 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
 
@@ -22,22 +21,21 @@ export class HomePageComponent implements AfterViewInit {
     loaded = false;
     notLoaded = true;
 
-    constructor(private pianoService: PianoService, private router: Router) { }
+    constructor(private pianoService: PianoService) { }
 
     ngAfterViewInit() {
-        this.loadEventSub = this.pianoService.getLoadEvent().subscribe(() => {
-            this.loaded = true;
-            setTimeout(() => {
-                this.notLoaded = false;
-                this.headerClass.push("rotate");
-
-            }, 1000);
-        })
+      this.loadEventSub = this.pianoService.getLoadEvent().subscribe(() => {
+        this.loaded = true;
+        setTimeout(() => {
+          this.notLoaded = false;
+          this.headerClass.push("rotate");
+        }, 1000);
+      })
     }
 
     ngOnDestroy() {
-        if (this.loadEventSub) {
-            this.loadEventSub.unsubscribe
-        }
+      if (this.loadEventSub) {
+        this.loadEventSub.unsubscribe
+      }
     }
 }

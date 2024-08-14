@@ -1,8 +1,8 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, Inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ThreeService } from '@services';
-import { MuteButtonComponent } from '@ui/mute-button/mute-button.component';
+import { MuteButtonComponent } from '@ui';
 
 
 @Component({

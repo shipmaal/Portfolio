@@ -14,6 +14,7 @@ export class MuteButtonComponent implements OnInit {
   dashOffset = 0; // Fully drawn initially
   isShrinking = false;
   muteState = true;
+  buttonOpacity = 0.5;
 
   constructor(private pianoService: PianoService) {}
 
@@ -28,5 +29,13 @@ export class MuteButtonComponent implements OnInit {
       this.pianoService.sendAudioState(!this.muteState);
       this.dashOffset = this.isShrinking ? 0 : this.dashArray;
       this.isShrinking = !this.isShrinking;
+  }
+
+  mouseEnter() {
+    this.buttonOpacity = 1;
+  }
+
+  mouseLeave() {
+    this.buttonOpacity = 0.5;
   }
 }
