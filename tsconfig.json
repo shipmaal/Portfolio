@@ -24,7 +24,7 @@
         "dom"
     ],
     "paths": {
-        "@services/*": [ "services/*" ],
+        "@services": [ "services/" ],
         "@templates/*": [ "templates/*" ],
         "@ui/*": [ "ui/*" ],
         "@coding/*": [ "app/pages/coding/*" ]

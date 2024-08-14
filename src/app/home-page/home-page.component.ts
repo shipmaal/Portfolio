@@ -1,13 +1,13 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, NavigationStart, NavigationEnd } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { Subscription } from 'rxjs';
 
 import { KeyboardComponent } from './keyboard/keyboard.component';
 import { TitleComponent } from './title/title.component';
 import { MenuComponent } from './menu/menu.component';
-import { PianoService } from '@services/piano.service';
+import { PianoService } from '@services';
 
 @Component({
 	selector: 'app-home-page',
@@ -22,17 +22,7 @@ export class HomePageComponent implements AfterViewInit {
     loaded = false;
     notLoaded = true;
 
-    constructor(private pianoService: PianoService, private router: Router) {
-    //     this.router.events.subscribe(event => {
-    //         console.log(event);
-    //         if (event instanceof NavigationStart || NavigationEnd) {
-    //             this.headerClass = ["header"];
-    //             setTimeout(() => {
-    //                 this.headerClass.push("animation");
-    //             }, 500);
-    //         }
-    //     });
-    }
+    constructor(private pianoService: PianoService, private router: Router) { }
 
     ngAfterViewInit() {
         this.loadEventSub = this.pianoService.getLoadEvent().subscribe(() => {
@@ -43,5 +33,11 @@ export class HomePageComponent implements AfterViewInit {
 
             }, 1000);
         })
+    }
+
+    ngOnDestroy() {
+        if (this.loadEventSub) {
+            this.loadEventSub.unsubscribe
+        }
     }
 }

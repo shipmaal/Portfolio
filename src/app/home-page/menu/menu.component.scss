@@ -36,24 +36,31 @@ $overlap: -100px;
     height: 8.2vh;
     font-size: 1.8vw;
     margin: 1%;
-    border-color: cornsilk;
-    border-style: solid;
-    border-width: 3.2px;
-    border-radius: 20px;
+    
     text-align: center;
     transition: background-color ease 0.5s;
-    text-decoration: none; /* Remove underline */
-    color: inherit; /* Inherit color from parent */
+    text-decoration: none;
+    color: inherit; 
 }
 
 .menu:hover {
     cursor: pointer;
-    background-color: rgba(cornsilk, 0.32);
 }
 
 span {
-    display: table-cell;
-    vertical-align: middle;
+  border-color: cornsilk;
+  border-style: solid;
+  border-width: 3.2px;
+  border-radius: 20px;
+  position: relative;
+  display: table-cell;
+  vertical-align: middle;
+  z-index: 5;
+}
+
+span:hover{
+  background-color: rgba(cornsilk, 0.32);
+
 }
 
 .vertical {

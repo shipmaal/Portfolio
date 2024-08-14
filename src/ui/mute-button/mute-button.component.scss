@@ -1,0 +1,18 @@
+#button-container {
+    position: absolute; 
+    top: 0; 
+    right: 0; 
+    width: 100px; 
+    height: 100px; 
+    margin: 8px 0 8px 0;
+    z-index: 5; 
+}
+
+#diagonal-path {
+    transition: stroke-dashoffset 0.8s ease;
+    cursor: pointer;
+}
+
+#mutebutton-path {
+    cursor: pointer;
+}
