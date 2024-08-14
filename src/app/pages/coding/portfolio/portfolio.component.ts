@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ExampleComponent } from './example/example.component'
-import { FrameworkButtonComponent } from '@ui/framework-button/framework-button.component'
+import { FrameworkButtonComponent } from '@ui'
 
 import { AngularCodeComponent, ReactCodeComponent } from '@templates/framework-code/framework-code.component';
 

@@ -10,11 +10,13 @@
     flex-direction: column;
     justify-content: flex-start;
     margin: 0 0 0 32px;
-    //position: fixed;
+    translate: -200px;
+    text-wrap: nowrap;
 }
 
 #sider-container {
     height: fit-content;
+    width: 0;
 }
 
 #content-container {
