@@ -1,53 +1,48 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationStart } from '@angular/router';
 
-import { PianoService } from './../piano.service'
 import { Subscription } from 'rxjs'
-import { filter } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-header',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+    selector: 'app-header',
+    standalone: true,
+    imports: [CommonModule],
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements AfterViewInit {
+export class HeaderComponent implements OnInit {
     loadEventSub!: Subscription;
-    headerClass: string[] = ["container"];
-    titleMargin = "5vh 0 0 0"
+    headerClass: string[] = ["rotate"];
+    titleMargin = "2vh 0 0 0"
     currentRoute!: string;
+    doDisplay = true;
+    canvasStyle = { 'cursor': 'default', 'opacity': '100' };
+    menuClass = Array(5).fill(["menu-item", ""]);
 
-    constructor(private lidService: PianoService, private router: Router) {
+    menuItems = [
+        { label: "About Me", link: "/about" },
+        { label: "Education", link: "/education" },
+        { label: "Coding Experience", link: "/coding" },
+        { label: "Music  Experience", link: "/music" },
+        { label: "Contact Me", link: "/contact" }
+    ];
+    
+    constructor(private router: Router) {
         this.currentRoute = this.router.url;
-
-        this.router.events
-            .pipe(filter(event => event instanceof NavigationEnd))
-            .subscribe(() => {
-                this.currentRoute = this.router.url;
-        })
     }
 
-
-    ngAfterViewInit() {
-        this.loadEventSub = this.lidService.getLoadEvent().subscribe(() => {
-            this.headerClass.push("rotate", "sticky");
-    })
-        
-        
-        window.addEventListener('scroll', this.scrollFunction);
-
+    ngOnInit(): void {
+        this.router.events.subscribe(event => {
+            if (event instanceof NavigationStart) {
+                this.doDisplay = event.url !== "/";
+                this.menuClass = this.menuItems.map(item => [
+                    "menu-item",
+                    item.link === event.url ? "underline" : ""
+                ]);
+            }
+        });
     }
-
-    private scrollFunction = () => {
-        const height = 24;
-        if (window.scrollY > height) {
-            this.titleMargin = "1vh 0 1vh 0";
-        } else {
-            this.titleMargin = "5vh 0 0 0";
-        }
-
-    }
-
 }
+
+    

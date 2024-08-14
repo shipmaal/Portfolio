@@ -1,0 +1,34 @@
+<!--I copied this directly (and shamelessly(I am not apologetic)) from the paypal website lol, same with the scss file but it works and it looks good--> 
+
+<div class="container">
+    <div data-layout="horizontal"
+         data-size="medium"
+         data-funding-source="paypal"
+         data-button=""
+         class="paypal-button
+                paypal-button-number-0
+                paypal-button-layout-
+                paypal-button-shape-pill
+                paypal-button-branding-branded
+                paypal-button-number-single
+                paypal-button-env-production
+                paypal-should-focus
+                paypal-button-label-paypal
+                paypal-button-color-gold
+                paypal-button-logo-color-blue"
+         role="button"
+         tabindex="0"
+         aria-label="PayPal"
+         onclick="window.open('https://www.paypal.com/donate/?hosted_button_id=HPMCPK6PCBFXS', '_blank', rel='noopener noreferrer')">
+        <div class="paypal-button-label-container">
+            <img class="paypal-button-logo paypal-button-logo-pp paypal-button-logo-gold"
+                 src="data:image/svg+xml;base64,{{ppSVG}}"
+                 alt=""
+                 aria-label="pp">
+            <img class="paypal-button-logo paypal-button-logo-paypal paypal-button-logo-gold"
+                 src="data:image/svg+xml;base64,{{paypalSVG}}"
+                 alt="" aria-label="paypal">
+        </div>
+    </div>
+</div>
+

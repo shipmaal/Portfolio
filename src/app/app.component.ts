@@ -1,34 +1,45 @@
-import { Component } from '@angular/core';
-import { bootstrapApplication } from '@angular/platform-browser';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 
-import { NgSwitch, NgSwitchDefault, NgSwitchCase } from '@angular/common';
+import { NgStyle } from '@angular/common';
+import { HeaderComponent } from './header/header.component'
 import { FooterComponent } from './footer/footer.component';
 import { HomePageComponent } from './home-page/home-page.component';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { RouterModule } from '@angular/router';
-import { HeaderComponent } from './header/header.component'
-
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
-    standalone: true,
-    imports: [NgSwitch, NgSwitchDefault, NgSwitchCase, HomePageComponent, HeaderComponent, FooterComponent, RouterModule]
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+  standalone: true,
+  imports: [RouterModule, NgStyle, HomePageComponent, HeaderComponent, FooterComponent]
 })
-export class AppComponent {
-    title = 'AlanPortfolio';
-}
+export class AppComponent implements OnInit, OnDestroy {
+    bodyWidth: { [key: string]: string } = {'width': '1132px'};
+    loading = false;
+    contentHeight: string = 'auto';
+    @ViewChild('contentContainer') contentContainer!: ElementRef;
 
-
-if (typeof Worker !== 'undefined') {
-  // Create a new
-  const worker = new Worker(new URL('./app.worker', import.meta.url));
-  worker.onmessage = ({ data }) => {
-    console.log(`page got message: ${data}`);
-  };
-  worker.postMessage('hello');
-} else {
-  // Web Workers are not supported in this environment.
-  // You should add a fallback so that your program still executes correctly.
+    routerSubscription!: Subscription;
+  
+    constructor(private router: Router) {}
+  
+    ngOnInit(): void {
+      // this.updateBodyWidth(this.router.url);
+      this.routerSubscription = this.router.events.subscribe(event => {
+        if (event instanceof NavigationEnd) {
+          this.updateBodyWidth(event.urlAfterRedirects);
+        }
+      });
+    }
+  
+    ngOnDestroy(): void {
+      if (this.routerSubscription) {
+        this.routerSubscription.unsubscribe();
+      }
+    }
+  
+    private updateBodyWidth(url: string): void {
+        this.bodyWidth = url === '/' ? { 'width': '100%' } : { 'width': '1132px' };
+    }
 }

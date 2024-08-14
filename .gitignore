@@ -30,6 +30,9 @@ yarn-error.log
 
 
 # Miscellaneous
+firebase.config.ts
+environments/environments
+.env
 /.angular/cache
 .sass-cache/
 /connect.lock
@@ -37,7 +40,16 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
+.firebase
 
 # System files
 .DS_Store
 Thumbs.db
+
+# Firebase
+.firebase
+*-debug.log
+.runtimeconfig.json
+/firebase.config.ts
+/functions/.env
+/.vs

@@ -1,4 +1,5 @@
 $step: 19vh; // Define the step size
+$overlap: -100px;
 
 .tooltipContainer {
     display: flex;
@@ -6,32 +7,40 @@ $step: 19vh; // Define the step size
     justify-self: center;
     justify-content: left;
 
-    @for $i from 1 through 5 {
+    @for $i from 1 through 4 {
         .menu:nth-child(#{$i}) {
+            top: $overlap;
             left: ($i - 1) * $step;
             transform: translateX(-4vh + 0.25 * $i);
         }
+    }
+
+    .menu:last-child {
+        top: $overlap;
+        left: 4 * $step;
+        transform: translateX(-4vh + 1.35);
     }
 }
 
 .tooltipDiv {
     position: absolute;
     display: inline-block;
+    z-index: 3;
     
 }
 
 .menu {
     display: table;
     width: 1.2 * $step;
+    z-index: 3;
     height: 8.2vh;
     font-size: 1.8vw;
     margin: 1%;
-    border-color: cornsilk;
-    border-style: solid;
-    border-width: 3.2px;
-    border-radius: 20px;
+    
     text-align: center;
-    transition: background-color ease 1s;
+    transition: background-color ease 0.5s;
+    text-decoration: none;
+    color: inherit; 
 }
 
 .menu:hover {
@@ -39,17 +48,28 @@ $step: 19vh; // Define the step size
 }
 
 span {
-    display: table-cell;
-    vertical-align: middle;
+  border-color: cornsilk;
+  border-style: solid;
+  border-width: 3.2px;
+  border-radius: 20px;
+  position: relative;
+  display: table-cell;
+  vertical-align: middle;
+  z-index: 5;
+}
+
+span:hover{
+  background-color: rgba(cornsilk, 0.32);
+
 }
 
 .vertical {
+    top: $overlap;
     position: absolute;
-    background-color: cadetblue;
     opacity: 0;
-    width: 1 * $step;
+    width: 1.2 * $step;
     height: 10vh;
-    transform: translateY(-10px);
-    left: 0.1 * $step;
+    transform: translateY(8.5vh);
+    left: -0;
 }
 

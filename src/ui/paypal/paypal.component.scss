@@ -1,0 +1,270 @@
+p {
+    height: 100vh;
+}
+
+div {
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 75%;
+    height: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+html, body {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    overflow: hidden;
+    text-align: center;
+}
+
+body {
+    display: inline-block;
+    vertical-align: top;
+}
+
+* {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: default;
+    box-sizing: border-box;
+}
+
+.hidden {
+    position: absolute;
+    visibility: hidden;
+}
+
+
+
+.paypal-button-container {
+    display: block;
+    white-space: nowrap;
+    margin: 0;
+    background: 0;
+    border: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    text-transform: none;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+    z-index: 0;
+    font-size: 0;
+    box-sizing: border-box;
+}
+
+.paypal-button:not(.paypal-button-card) {
+    border: 1px solid transparent;
+    border-radius: 0 3px 3px 0;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    vertical-align: top;
+    cursor: pointer;
+    outline: none;
+    overflow: hidden;
+}
+
+.paypal-button.paypal-button-color-transparent {
+    cursor: auto;
+}
+
+.paypal-button * {
+    cursor: pointer;
+}
+
+.paypal-button-container.paypal-button-env-test .paypal-button-text {
+    font-family: Arial !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    color: transparent !important;
+    text-shadow: none !important;
+}
+
+.paypal-button:hover {
+    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.2);
+}
+
+.paypal-button.paypal-button-color-gold:hover,
+.paypal-button.paypal-button-color-silver:hover {
+    box-shadow: inset 0 0 100px 100px rgba(0, 0, 0, 0.05);
+}
+
+.paypal-button-card, .paypal-button-card * {
+    cursor: pointer;
+}
+
+.paypal-button-card:hover {
+    filter: brightness(1.2);
+}
+
+.paypal-button:focus, .paypal-button-card:focus {
+    outline: none;
+}
+
+.paypal-should-focus .paypal-button:focus,
+.paypal-should-focus .paypal-button-card:focus {
+    outline: solid 2px Highlight;
+    outline: auto 5px -webkit-focus-ring-color;
+    outline-offset: -3px;
+}
+
+.paypal-button:focus {
+    box-shadow: -1px -1px 18px 1px rgba(0, 0, 0, 0.25) inset;
+}
+
+.paypal-button.paypal-button-color-transparent:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.paypal-button-logo {
+    padding: 0;
+    display: inline-block;
+    background: none;
+    border: none;
+    width: auto;
+}
+
+.paypal-button-text {
+    display: inline-block;
+    white-space: pre;
+}
+
+.paypal-button .paypal-button-label-container {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+    width: 80%;
+    height: 80%;
+}
+
+.paypal-button > .paypal-button-label-container > * {
+    vertical-align: top;
+    height: 100%;
+    text-align: left;
+}
+
+.paypal-button .paypal-button-card {
+    border-radius: 4px;
+}
+
+.powered-by-paypal > .paypal-button-text {
+    vertical-align: top;
+    line-height: 18px;
+}
+
+.powered-by-paypal > .paypal-button-logo {
+    height: 16px;
+    min-height: 16px;
+}
+
+.paypal-button-tagline {
+    max-width: 100%;
+    font-weight: normal;
+    display: block;
+    text-align: center;
+    width: auto;
+}
+
+.paypal-separator {
+    height: 80%;
+    border-left: 1px solid rgba(0, 0, 0, 0.15);
+    margin: 0 8px;
+    display: inline-block;
+    position: relative;
+    top: 10%;
+}
+
+.paypal-button.paypal-button-color-black .paypal-separator {
+    border-color: rgba(255, 255, 255, 0.45);
+}
+
+
+
+.paypal-button.paypal-button-color-gold {
+    background: #ffc439;
+    color: #111;
+}
+
+.paypal-button.paypal-button-color-blue {
+    background: #009cde;
+    color: #fff;
+}
+
+.paypal-button.paypal-button-color-silver {
+    background: #eee;
+    color: #111;
+}
+
+.paypal-button.paypal-button-color-black {
+    background: #2C2E2F;
+    color: #fff;
+}
+
+.paypal-button.paypal-button-color-darkblue {
+    background: #003087;
+    color: #fff;
+}
+
+.paypal-button.paypal-button-color-transparent {
+    background: transparent;
+    color: #111;
+}
+
+.paypal-button.paypal-button-color-white {
+    background: #fff;
+    color: #2C2E2F;
+    border: 1px solid #2C2E2F;
+}
+
+
+
+.paypal-button-container.paypal-button-layout-vertical .paypal-button-tagline {
+    display: none;
+}
+
+
+
+.paypal-button.paypal-button-branding-unbranded {
+    min-width: 60%;
+    width: auto;
+    font-weight: 900;
+}
+
+.paypal-button.paypal-button-branding-unbranded .paypal-button-logo {
+    display: none;
+}
+
+
+
+.paypal-button.paypal-button-label-card {
+    border-radius: 0 !important;
+}
+
+.paypal-button.paypal-button-label-credit .paypal-button-text {
+    display: none !important;
+}
+
+.paypal-button.paypal-button-layout-horizontal.paypal-button-number-multiple.paypal-button-label-credit .paypal-button-logo.paypal-button-logo-paypal {
+    display: none;
+}
+
+.paypal-button.paypal-button-shape-pill {
+    border-radius: 24px;
+}

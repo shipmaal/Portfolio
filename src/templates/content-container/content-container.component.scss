@@ -1,0 +1,13 @@
+.sub-container {
+    margin: 32px 0;
+    display: flex;
+    justify-content: center;
+    min-height: fit-content;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    min-height: fit-content;
+}

@@ -1,2 +1,0 @@
-C:\Users\atshi\source\repos\AlanPortfolio\AlanPortfolio\obj\Debug\AlanPortfolio.esproj.SuggestedBindingRedirects.cache
-C:\Users\atshi\source\repos\AlanPortfolio\AlanPortfolio\obj\Debug\AlanPortfolio.esproj.CoreCompileInputs.cache

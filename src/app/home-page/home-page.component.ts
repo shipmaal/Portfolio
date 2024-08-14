@@ -1,11 +1,12 @@
 import { AfterViewInit, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { Subscription } from 'rxjs';
+
 import { KeyboardComponent } from './keyboard/keyboard.component';
 import { TitleComponent } from './title/title.component';
 import { MenuComponent } from './menu/menu.component';
-import { PianoService } from '../piano.service';
-import { Subscription } from 'rxjs';
+import { PianoService } from '@services';
 
 @Component({
 	selector: 'app-home-page',
@@ -15,22 +16,26 @@ import { Subscription } from 'rxjs';
 	styleUrls: ['./home-page.component.scss']
 })
 export class HomePageComponent implements AfterViewInit {
-
+    headerClass: string[] = ["header", "animation"];
     loadEventSub!: Subscription;
     loaded = false;
     notLoaded = true;
 
-
-    constructor(private pianoService: PianoService) {
-
-    }
+    constructor(private pianoService: PianoService) { }
 
     ngAfterViewInit() {
-        this.loadEventSub = this.pianoService.getLoadEvent().subscribe(() => {
-            this.loaded = true;
-            setTimeout(() => {
-                this.notLoaded = false;
-            }, 1000);
-        })
+      this.loadEventSub = this.pianoService.getLoadEvent().subscribe(() => {
+        this.loaded = true;
+        setTimeout(() => {
+          this.notLoaded = false;
+          this.headerClass.push("rotate");
+        }, 1000);
+      })
+    }
+
+    ngOnDestroy() {
+      if (this.loadEventSub) {
+        this.loadEventSub.unsubscribe
+      }
     }
 }

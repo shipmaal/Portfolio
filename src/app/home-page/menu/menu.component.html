@@ -1,13 +1,14 @@
 <div class="tooltipContainer">
-    <div
-        class="tooltipDiv menu"
-        *ngFor="let style of buttonStyle; let i = index"
-        [style.visibility]="style"
-        (mouseenter)="onMouseEnter(i)"
-        (mouseleave)="onMouseLeave(i)"
-        (click)="onClick(i)"
+  @for (style of buttonStyles; track $index; let i = $index) {
+    <a  
+      href="{{ menuItems[i].link }}"
+      class="tooltipDiv menu"
+      [style.visibility]="style"
+      (mouseenter)="onMouseEnter(i)"
+      (mouseleave)="onMouseLeave(i)"
     >
-        <span>{{ menuText[i] }}</span>
-        <div class="vertical"></div>
-    </div>
+      <span>{{ menuItems[i].label }}</span>
+      <div class="vertical"></div>
+    </a>
+  }
 </div>

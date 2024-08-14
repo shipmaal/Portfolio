@@ -1,3 +1,23 @@
+.header {
+	position: relative;
+	z-index: 2;
+    display: flex;
+    justify-content: center;
+    width: fit-content;
+    background: black;
+    transform: rotateX(90deg);
+}
+
+.animation {
+    transform-style: preserve-3d;
+    transform-origin: center center -75px;
+    transition: transform 0.5s ease;
+}
+
+.rotate {
+	transform-origin: center center -75px;
+	transform: rotateX(0deg);
+}
 
 .container {
 	display: flex;
@@ -6,12 +26,16 @@
 	justify-content: center;
 }
 
+.title {
+	margin: 16px 0 0 0;
+}
+
 app-keyboard,
 .child {
 	width: 100%;
 	height: 100%;
 	position: absolute;
-	margin: 20px 0 0 0;
+	margin: -90px 0 0 0;  // works at 20 need to change move menu up 30px
 	top: 0;
 }
 
@@ -20,7 +44,6 @@ app-keyboard,
 	display: flex;
 	justify-content: center
 }
-
 
 app-header {
 	height: fit-content;
@@ -36,7 +59,6 @@ app-title {
 	top: 0;
 	display: grid;
 }
-
 
 app-menu {
 	position: absolute;

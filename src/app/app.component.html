@@ -1,2 +1,8 @@
-<app-header></app-header>
-<router-outlet></router-outlet>
+<div style="display: flex; justify-content: center;">
+    <div [ngStyle]="bodyWidth">
+        <app-header></app-header>
+        <router-outlet #contentContainer></router-outlet>
+        <div #loadingWire></div>
+        <app-footer></app-footer>
+    </div>
+</div> 
