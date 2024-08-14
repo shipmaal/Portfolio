@@ -1,22 +1,19 @@
-<div id="container" class="container" [ngStyle]="canvasStyle" >
-    <div [ngClass]="headerClass">
-        <h1
-            class="title"
-            [style.margin]="titleMargin"
-            (mouseenter)="onMouseEnter(-1)"
-            (mouseleave)="onMouseLeave(-1)"
-            (click)="onClick(-1)">
-            Alan's Portfolio
-        </h1>
+@if (doDisplay) {
+    <div id="container" class="container" [ngStyle]="canvasStyle" >
+        <a href="/" class="header-link">
+            <h1
+                class="title"
+                [style.margin]="titleMargin">
+                Alan's Portfolio
+            </h1>
+        </a>
+        <div id="menu" class="menu">
+            @for (item of menuItems; track $index; let i = $index) {
+                <a href="{{ item.link }}"
+                    [ngClass]="menuClass[i]">
+                    <p>{{ item.label }}</p>
+                </a>
+            }
+        </div>  
     </div>
-    <div *ngIf="displayMenu" id="menu" class="menu">
-        <div [ngClass]="menuClass[i]" *ngFor="let item of menuItems; let i = index">
-            <div
-                (mouseenter)="onMouseEnter(i)"
-                (mouseleave)="onMouseLeave(i)"
-                (click)="onClick(i)">
-                <p>{{ item.label }}</p>
-            </div>
-        </div>
-    </div>
-</div>
+}

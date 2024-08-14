@@ -15,23 +15,27 @@ a:hover {
     display: flex;
     flex-direction: column;
     justify-self: center;
+    height: fit-content;
+    min-height: fit-content;
 }
 
 .subcontainer {
     display: flex;
     flex-wrap: nowrap;
-    gap: 10px;
+    justify-content: space-between;
+    padding: 32px 0;
+    height: 450px;
 }
 
 .paragraph-div {
-    width: 48%;
+    width: 60%;
     text-align: justify;
     word-break: break-word;
     line-height: 1.5;
 }
 
 .about-first-paragraph {
-    margin-top: 32px;
+    margin-top: 0;
 }
 
 
@@ -44,6 +48,7 @@ a:hover {
 }
 
 .image {
-    width: 48%;
-    margin: 32px 0;
+    // margin: 32px 0;
+    height: auto !important;
+    width: 100% !important;
 }

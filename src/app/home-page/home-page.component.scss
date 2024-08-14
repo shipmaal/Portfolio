@@ -1,9 +1,33 @@
+.header {
+	position: relative;
+	z-index: 2;
+    display: flex;
+    justify-content: center;
+    width: fit-content;
+    background: black;
+    transform: rotateX(90deg);
+}
+
+.animation {
+    transform-style: preserve-3d;
+    transform-origin: center center -75px;
+    transition: transform 0.5s ease;
+}
+
+.rotate {
+	transform-origin: center center -75px;
+	transform: rotateX(0deg);
+}
 
 .container {
 	display: flex;
 	position: relative;
 	height: 100vh;
 	justify-content: center;
+}
+
+.title {
+	margin: 16px 0 0 0;
 }
 
 app-keyboard,
@@ -21,7 +45,6 @@ app-keyboard,
 	justify-content: center
 }
 
-
 app-header {
 	height: fit-content;
 	width: 100%;
@@ -36,7 +59,6 @@ app-title {
 	top: 0;
 	display: grid;
 }
-
 
 app-menu {
 	position: absolute;
